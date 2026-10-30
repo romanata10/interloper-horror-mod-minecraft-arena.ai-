@@ -24,21 +24,15 @@ public final class ModNetwork {
         CHANNEL.messageBuilder(ScreenEffectPacket.class, nextId++, NetworkDirection.PLAY_TO_CLIENT)
                 .encoder(ScreenEffectPacket::encode)
                 .decoder(ScreenEffectPacket::decode)
-                .consumer((msg, ctx) -> {
-                    ctx.get().enqueueWork(() -> DistExecutor.unsafeRunWhenOn(Dist.CLIENT,
-                            () -> () -> ClientPacketHandler.handleScreenEffect(msg)));
-                    ctx.get().setPacketHandled(true);
-                })
+                .consumerMainThread((msg, ctx) -> DistExecutor.unsafeRunWhenOn(Dist.CLIENT,
+                        () -> () -> ClientPacketHandler.handleScreenEffect(msg)))
                 .add();
 
         CHANNEL.messageBuilder(ChatGhostPacket.class, nextId++, NetworkDirection.PLAY_TO_CLIENT)
                 .encoder(ChatGhostPacket::encode)
                 .decoder(ChatGhostPacket::decode)
-                .consumer((msg, ctx) -> {
-                    ctx.get().enqueueWork(() -> DistExecutor.unsafeRunWhenOn(Dist.CLIENT,
-                            () -> () -> ClientPacketHandler.handleChat(msg)));
-                    ctx.get().setPacketHandled(true);
-                })
+                .consumerMainThread((msg, ctx) -> DistExecutor.unsafeRunWhenOn(Dist.CLIENT,
+                        () -> () -> ClientPacketHandler.handleChat(msg)))
                 .add();
     }
 

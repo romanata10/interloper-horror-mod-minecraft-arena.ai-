@@ -35,6 +35,7 @@ public class UmbrellaItem extends Item {
         ItemStack stack = player.getItemInHand(hand);
 
         if (!level.isClientSide && player instanceof ServerPlayer serverPlayer) {
+            net.minecraft.server.level.ServerLevel serverLevel = serverPlayer.serverLevel();
             level.playSound(null, player.blockPosition(), ModSounds.UMBRELLA.get(), SoundSource.PLAYERS, 1.0F, 0.7F);
             ModNetwork.toPlayer(serverPlayer, new ScreenEffectPacket(ScreenEffectPacket.Effect.SHAKE, 100, 0.7F));
             ModNetwork.toPlayer(serverPlayer, new ScreenEffectPacket(ScreenEffectPacket.Effect.GLITCH, 140, 0.8F));
@@ -44,7 +45,7 @@ public class UmbrellaItem extends Item {
             for (int i = 0; i < 3; i++) {
                 double x = player.getX() + (level.getRandom().nextDouble() - 0.5D) * 40.0D;
                 double z = player.getZ() + (level.getRandom().nextDouble() - 0.5D) * 40.0D;
-                InterloperEntity interloper = ModEntities.INTERLOPER.get().spawn(level,
+                InterloperEntity interloper = ModEntities.INTERLOPER.get().spawn(serverLevel,
                         net.minecraft.core.BlockPos.containing(x, player.getY(), z), MobSpawnType.EVENT);
                 if (interloper != null) {
                     interloper.setTarget(player);

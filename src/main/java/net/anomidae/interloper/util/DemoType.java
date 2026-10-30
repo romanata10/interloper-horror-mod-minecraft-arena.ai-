@@ -58,11 +58,11 @@ public enum DemoType {
         return "demo." + Interloper.MODID + "." + key + ".log" + line;
     }
 
-    public Component displayName() {
+    public net.minecraft.network.chat.MutableComponent displayName() {
         return Component.translatable("item." + Interloper.MODID + ".demo_tape.named", Component.translatable(nameKey()));
     }
 
-    public Component description() {
+    public net.minecraft.network.chat.MutableComponent description() {
         return Component.translatable("demo." + Interloper.MODID + "." + key + ".desc");
     }
 

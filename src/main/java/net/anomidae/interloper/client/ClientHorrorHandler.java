@@ -69,9 +69,9 @@ public final class ClientHorrorHandler {
         }
         float time = (float) event.getPartialTick();
         double amount = 0.9D * strength;
-        event.setRoll(event.getRoll() + Math.sin(time * 2.3D) * amount);
-        event.setYaw(event.getYaw() + Math.cos(time * 3.1D) * amount * 0.6D);
-        event.setPitch(event.getPitch() + Math.sin(time * 2.7D) * amount * 0.4D);
+        event.setRoll((float) (event.getRoll() + Math.sin(time * 2.3D) * amount));
+        event.setYaw((float) (event.getYaw() + Math.cos(time * 3.1D) * amount * 0.6D));
+        event.setPitch((float) (event.getPitch() + Math.sin(time * 2.7D) * amount * 0.4D));
     }
 
     @SubscribeEvent

@@ -17,6 +17,7 @@ public final class InterloperConfig {
     public static final ForgeConfigSpec.BooleanValue NATURAL_SKYGHOST;
     public static final ForgeConfigSpec.BooleanValue SCANNER_GLITCH;
     public static final ForgeConfigSpec.BooleanValue INTRO_MESSAGE;
+    public static final ForgeConfigSpec.IntValue CRASH_COOLDOWN;
 
     static {
         ForgeConfigSpec.Builder b = new ForgeConfigSpec.Builder();
@@ -32,6 +33,9 @@ public final class InterloperConfig {
         NATURAL_INTERLOPER = b.comment("Allow the Interloper to hunt players on its own at night.").define("natural_interloper", true);
         INTERLOPER_SPAWN_CHANCE = b.comment("1 in N chance per ambience roll to start a hunt (night only).").defineInRange("hunt_chance", 6, 1, 100);
         NATURAL_SKYGHOST = b.comment("Allow the Skyghost to watch from the distance.").define("natural_skyghost", true);
+        CRASH_COOLDOWN = b.comment("Seconds a player is left alone after the Interloper crashed them out. " +
+                        "During this time the Interloper still appears but only vanishes instead of kicking.")
+                .defineInRange("crash_cooldown_seconds", 180, 0, 3600);
         b.pop();
 
         b.comment("Visuals").push("visuals");

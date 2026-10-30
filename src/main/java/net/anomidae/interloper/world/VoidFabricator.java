@@ -24,8 +24,8 @@ public final class VoidFabricator {
     public static void ensureSpawn(ServerLevel level) {
         decorate(level, 0, 0, level.getRandom());
         // Clear anything that might have grown on the spawn pad.
-        for (int x = -5; x <= 5; x++) {
-            for (int z = -5; z <= 5; z++) {
+        for (int x = -16; x <= 16; x++) {
+            for (int z = -16; z <= 16; z++) {
                 for (int y = 0; y < 10; y++) {
                     level.setBlock(new BlockPos(x, SourceVoid.FLOOR_Y + y, z), Blocks.AIR.defaultBlockState(), 2);
                 }
@@ -59,6 +59,13 @@ public final class VoidFabricator {
         } finally {
             level.getProfiler().pop();
         }
+    }
+
+    /**
+     * Called when the server stops: the next world gets its own structures.
+     */
+    public static void reset() {
+        DECORATED.clear();
     }
 
     private static long mix(long key) {

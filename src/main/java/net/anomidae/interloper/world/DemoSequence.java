@@ -6,6 +6,7 @@ import net.anomidae.interloper.network.ModNetwork;
 import net.anomidae.interloper.network.ScreenEffectPacket;
 import net.anomidae.interloper.registry.ModEntities;
 import net.anomidae.interloper.registry.ModSounds;
+import net.anomidae.interloper.util.Hunters;
 import net.anomidae.interloper.util.ServerScheduler;
 import net.anomidae.interloper.util.SourceText;
 import net.minecraft.ChatFormatting;
@@ -102,6 +103,7 @@ public final class DemoSequence {
         double z = player.getZ() - look.z * 42.0D + (level.getRandom().nextDouble() - 0.5D) * 10.0D;
         double y = player.getY() + 6.0D;
         interloper.moveTo(x, y, z, player.getYRot(), 0.0F);
+        interloper.bindPlayer(player.getUUID());
         interloper.setTarget(player);
         interloper.setHunting(true);
         level.addFreshEntity(interloper);
@@ -113,7 +115,8 @@ public final class DemoSequence {
 
     private static void schedule(ServerPlayer player, int delay, Runnable action) {
         ServerScheduler.schedule(delay, () -> {
-            if (player.isAlive() && player.connection != null) {
+            // the demo belongs to one player; if they left, the tape stops
+            if (Hunters.isOnline(player) && player.isAlive()) {
                 action.run();
             }
         });

@@ -6,6 +6,7 @@ import com.mojang.brigadier.arguments.StringArgumentType;
 import com.mojang.brigadier.builder.LiteralArgumentBuilder;
 import com.mojang.brigadier.context.CommandContext;
 import com.mojang.brigadier.exceptions.CommandSyntaxException;
+import net.anomidae.interloper.util.Hunters;
 import net.anomidae.interloper.item.ConsoleCommands;
 import net.anomidae.interloper.registry.ModItems;
 import net.anomidae.interloper.world.DemoSequence;
@@ -13,6 +14,7 @@ import net.anomidae.interloper.world.SourceVoid;
 import net.minecraft.ChatFormatting;
 import net.minecraft.commands.CommandSourceStack;
 import net.minecraft.commands.Commands;
+import net.minecraft.commands.arguments.EntityArgument;
 import net.minecraft.network.chat.Component;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.item.ItemStack;
@@ -25,7 +27,20 @@ public final class InterloperCommand {
         LiteralArgumentBuilder<CommandSourceStack> root = Commands.literal("interloper")
                 .executes(InterloperCommand::help)
                 .then(Commands.literal("help").executes(InterloperCommand::help))
-                .then(Commands.literal("hunt").executes(InterloperCommand::hunt))
+                .then(Commands.literal("hunt")
+                        .executes(InterloperCommand::hunt)
+                        .then(Commands.argument("target", EntityArgument.player())
+                                .requires(source -> source.hasPermission(2))
+                                .executes(context -> huntPlayer(context,
+                                        EntityArgument.getPlayer(context, "target")))))
+                .then(Commands.literal("stop")
+                        .executes(InterloperCommand::stop)
+                        .then(Commands.argument("target", EntityArgument.player())
+                                .requires(source -> source.hasPermission(2))
+                                .executes(context -> stopPlayer(context,
+                                        EntityArgument.getPlayer(context, "target")))))
+                .then(Commands.literal("reset")
+                        .executes(InterloperCommand::reset))
                 .then(Commands.literal("void").executes(InterloperCommand::enterVoid))
                 .then(Commands.literal("exit").executes(InterloperCommand::leaveVoid))
                 .then(Commands.literal("console").executes(InterloperCommand::console))
@@ -42,7 +57,9 @@ public final class InterloperCommand {
 
     private static int help(CommandContext<CommandSourceStack> context) {
         CommandSourceStack source = context.getSource();
-        source.sendSuccess(() -> Component.literal("/interloper hunt       - start a hunt"), false);
+        source.sendSuccess(() -> Component.literal("/interloper hunt [player] - start a hunt"), false);
+        source.sendSuccess(() -> Component.literal("/interloper stop [player] - end all hunts against a player"), false);
+        source.sendSuccess(() -> Component.literal("/interloper reset      - clear your crash cooldown"), false);
         source.sendSuccess(() -> Component.literal("/interloper demo <1-5> - play a demo"), false);
         source.sendSuccess(() -> Component.literal("/interloper void       - go to the source void"), false);
         source.sendSuccess(() -> Component.literal("/interloper exit       - leave the source void"), false);
@@ -54,6 +71,37 @@ public final class InterloperCommand {
     private static int hunt(CommandContext<CommandSourceStack> context) throws CommandSyntaxException {
         ServerPlayer player = context.getSource().getPlayerOrException();
         DemoSequence.spawnHunter(player, true);
+        return 1;
+    }
+
+    private static int huntPlayer(CommandContext<CommandSourceStack> context, ServerPlayer target) {
+        DemoSequence.spawnHunter(target, true);
+        context.getSource().sendSuccess(() -> Component.literal("hunt started for " + target.getGameProfile().getName()),
+                false);
+        return 1;
+    }
+
+    /**
+     * Ends every hunt aimed at this player. On a server this is the admin "leave them alone" button.
+     */
+    private static int stop(CommandContext<CommandSourceStack> context) throws CommandSyntaxException {
+        ServerPlayer player = context.getSource().getPlayerOrException();
+        Hunters.discardBoundTo(player);
+        context.getSource().sendSuccess(() -> Component.literal("all hunts against you were ended"), false);
+        return 1;
+    }
+
+    private static int stopPlayer(CommandContext<CommandSourceStack> context, ServerPlayer target) {
+        Hunters.discardBoundTo(target);
+        context.getSource().sendSuccess(() -> Component.literal("all hunts against "
+                + target.getGameProfile().getName() + " were ended"), false);
+        return 1;
+    }
+
+    private static int reset(CommandContext<CommandSourceStack> context) throws CommandSyntaxException {
+        ServerPlayer player = context.getSource().getPlayerOrException();
+        Hunters.clearCrashCooldown(player);
+        context.getSource().sendSuccess(() -> Component.literal("interloper cooldown cleared"), false);
         return 1;
     }
 

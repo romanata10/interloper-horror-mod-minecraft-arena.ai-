@@ -3,6 +3,7 @@ package net.anomidae.interloper.entity;
 import net.anomidae.interloper.network.ModNetwork;
 import net.anomidae.interloper.network.ScreenEffectPacket;
 import net.anomidae.interloper.registry.ModSounds;
+import net.anomidae.interloper.util.Hunters;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.sounds.SoundSource;
 import net.minecraft.world.entity.EntityType;
@@ -12,6 +13,7 @@ import net.minecraft.world.level.Level;
 
 /**
  * A villager whose rig was never finished. It follows you through everything.
+ * If it reaches you it kills you and is deleted in the same tick.
  */
 public class CrasherEntity extends SourceEntity {
     public CrasherEntity(EntityType<? extends CrasherEntity> type, Level level) {
@@ -29,7 +31,7 @@ public class CrasherEntity extends SourceEntity {
 
     @Override
     protected void serverTick() {
-        var player = this.nearestPlayer(64.0D);
+        ServerPlayer player = this.resolveTarget(64.0D);
         if (player == null) {
             return;
         }
@@ -47,14 +49,15 @@ public class CrasherEntity extends SourceEntity {
             this.level().playSound(null, this.blockPosition(), ModSounds.WHISPER.get(), SoundSource.HOSTILE, 0.6F, 0.35F);
         }
         if (this.touching(player)) {
-            hit(player);
+            this.hit(player);
         }
     }
 
     private void hit(ServerPlayer player) {
         ModNetwork.toPlayer(player, new ScreenEffectPacket(ScreenEffectPacket.Effect.CRASH_TEXT, 100, 1.0F));
         player.level().playSound(null, player.blockPosition(), ModSounds.CAPTURE.get(), SoundSource.HOSTILE, 1.0F, 0.4F);
-        player.hurt(player.level().damageSources().genericKill(), 1000.0F);
+        player.hurt(this.damageSources().mobAttack(this), 1000.0F);
+        Hunters.forget(this);
         this.discard();
     }
 }

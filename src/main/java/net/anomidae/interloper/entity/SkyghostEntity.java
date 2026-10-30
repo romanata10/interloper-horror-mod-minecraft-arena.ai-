@@ -1,28 +1,30 @@
 package net.anomidae.interloper.entity;
 
 import net.anomidae.interloper.registry.ModSounds;
+import net.anomidae.interloper.util.Hunters;
 import net.minecraft.core.BlockPos;
 import net.minecraft.nbt.CompoundTag;
+import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.sounds.SoundEvents;
 import net.minecraft.sounds.SoundSource;
 import net.minecraft.util.RandomSource;
+import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.EntityType;
+import net.minecraft.world.entity.Mob;
 import net.minecraft.world.entity.MobSpawnType;
 import net.minecraft.world.entity.ai.attributes.AttributeSupplier;
 import net.minecraft.world.entity.ai.attributes.Attributes;
 import net.minecraft.world.entity.monster.Monster;
 import net.minecraft.server.level.ServerLevel;
-import net.minecraft.world.entity.Entity;
-import net.minecraft.world.entity.EntityType;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.ServerLevelAccessor;
 import net.minecraft.world.phys.Vec3;
 
 /**
- * A player in an A-pose that is not a player. It watches, it beeps, it spawns
- * things, and sometimes it decides that you should stop playing.
+ * A player in an A-pose that is not a player. It watches one specific player,
+ * beeps, spawns things, and sometimes decides that you should stop playing.
  */
-public class SkyghostEntity extends Monster {
+public class SkyghostEntity extends SourceEntity {
     private static final EntityType<?>[] SPAWNABLE = {
             EntityType.ZOMBIE, EntityType.SKELETON, EntityType.CREEPER, EntityType.SPIDER,
             EntityType.ENDERMAN, EntityType.WITCH, EntityType.PILLAGER, EntityType.DROWNED,
@@ -37,9 +39,6 @@ public class SkyghostEntity extends Monster {
 
     public SkyghostEntity(EntityType<? extends SkyghostEntity> type, Level level) {
         super(type, level);
-        this.setNoGravity(true);
-        this.noPhysics = true;
-        this.setPersistenceRequired();
         this.xpReward = 10;
     }
 
@@ -52,35 +51,26 @@ public class SkyghostEntity extends Monster {
     }
 
     @Override
-    protected void registerGoals() {
-        // It only watches.
-    }
-
-    @Override
-    public void tick() {
-        super.tick();
+    protected void serverTick() {
         if (this.isOnFire()) {
             this.clearFire();
-        }
-        if (this.level().isClientSide) {
-            return;
         }
 
         this.lifeTicks++;
         if (this.lifeTicks > 20 * 120) {
-            this.discard();
+            this.abandonHunt();
             return;
         }
 
-        var nearest = this.level().getNearestPlayer(this, 64.0D);
-        if (!(nearest instanceof net.minecraft.server.level.ServerPlayer player)) {
+        ServerPlayer player = this.resolveTarget(64.0D);
+        if (player == null) {
             return;
         }
 
         this.getLookControl().setLookAt(player, 40.0F, 40.0F);
         double distance = this.distanceTo(player);
         if (distance < 3.2D) {
-            this.discard();
+            this.abandonHunt();
             return;
         }
 
@@ -116,30 +106,32 @@ public class SkyghostEntity extends Monster {
 
         if (--this.spawnTimer <= 0) {
             this.spawnTimer = 200 + this.random.nextInt(300);
-            this.spawnSomething();
+            this.spawnSomething(player);
         }
 
         if (distance < 7.0D && --this.killTimer <= 0) {
             this.killTimer = 200;
             if (this.random.nextInt(6) == 0 && player.isAlive()) {
-                player.hurt(player.level().damageSources().genericKill(), 1000.0F);
-                this.level().playSound(null, player.blockPosition(), SoundEvents.EXPERIENCE_ORB_PICKUP,
-                        SoundSource.HOSTILE, 1.0F, 0.4F);
+                this.killPlayer(player);
             }
         }
     }
 
-    private void spawnSomething() {
+    private void killPlayer(ServerPlayer player) {
+        this.level().playSound(null, player.blockPosition(), SoundEvents.EXPERIENCE_ORB_PICKUP,
+                SoundSource.HOSTILE, 1.0F, 0.4F);
+        player.hurt(this.damageSources().mobAttack(this), 1000.0F);
+        // it does not stay after the kill
+        this.abandonHunt();
+    }
+
+    private void spawnSomething(ServerPlayer player) {
         if (!(this.level() instanceof ServerLevel level)) {
             return;
         }
         EntityType<?> type = SPAWNABLE[this.random.nextInt(SPAWNABLE.length)];
         Entity entity = type.create(level);
-        if (!(entity instanceof net.minecraft.world.entity.Mob mob)) {
-            return;
-        }
-        var player = level.getNearestPlayer(this, 40.0D);
-        if (player == null) {
+        if (!(entity instanceof Mob mob)) {
             return;
         }
         double x = player.getX() + (this.random.nextDouble() - 0.5D) * 14.0D;
@@ -152,18 +144,12 @@ public class SkyghostEntity extends Monster {
     }
 
     @Override
-    public boolean isPushable() {
-        return false;
-    }
-
-    @Override
-    public boolean removeWhenFarAway(double distance) {
-        return false;
-    }
-
-    @Override
-    protected boolean shouldDespawnInPeaceful() {
-        return false;
+    public boolean hurt(net.minecraft.world.damagesource.DamageSource source, float amount) {
+        if (source.getEntity() instanceof ServerPlayer player && this.isBoundTo(player.getUUID())) {
+            this.abandonHunt();
+            return false;
+        }
+        return super.hurt(source, amount);
     }
 
     @Override

@@ -93,6 +93,9 @@ public final class VoidDirector {
 
         Vec3Helper.place(mob, x + 0.5D, y, z + 0.5D, level.getRandom().nextFloat() * 360.0F);
         mob.setPersistenceRequired();
+        if (mob instanceof net.anomidae.interloper.util.TargetBound bound) {
+            bound.bindPlayer(player.getUUID());
+        }
         level.addFreshEntity(mob);
 
         ServerScheduler.schedule(20 * (30 + level.getRandom().nextInt(45)), () -> {

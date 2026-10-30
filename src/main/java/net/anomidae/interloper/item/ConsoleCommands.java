@@ -123,9 +123,13 @@ public final class ConsoleCommands {
             return;
         }
         entity.moveTo(pos.getX() + 0.5D, pos.getY(), pos.getZ() + 0.5D, player.getYRot(), 0.0F);
+        if (entity instanceof net.anomidae.interloper.util.TargetBound bound) {
+            bound.bindPlayer(player.getUUID());
+        }
         level.addFreshEntity(entity);
         if (entity instanceof InterloperEntity interloper && !(entity instanceof InterloperCorruptEntity)) {
             interloper.setHunting(true);
+            interloper.setTarget(player);
         }
         line(player, "spawned " + name, 0xFFCFCFCF, false);
     }

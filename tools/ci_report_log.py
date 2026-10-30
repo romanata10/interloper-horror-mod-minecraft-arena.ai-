@@ -24,9 +24,13 @@ def main() -> int:
     data = LOG.read_text(errors="replace")
     lines = data.splitlines()
 
-    interesting = [l for l in lines if re.search(r"(?i)error|fail|exception|caused by|could not|what went wrong", l)]
+    interesting = []
+    for i, line in enumerate(lines):
+        if re.search(r"(error:|FAILURE:|What went wrong|Could not resolve|Caused by)", line):
+            interesting.extend(lines[i:i + 5])
+            interesting.append("---")
     if interesting:
-        emit("MATCHED LINES:%0A" + "\n".join(interesting[:60]))
+        emit("MATCHED LINES:%0A" + "\n".join(interesting[:200]))
     else:
         emit("NO MATCHED LINES")
 

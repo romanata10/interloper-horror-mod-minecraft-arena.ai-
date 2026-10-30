@@ -17,7 +17,7 @@
 
 Готовый `.jar` лежит в **Releases**: https://github.com/romanata10/interloper-horror-mod-minecraft-arena.ai-/releases/latest
 
-**`interloper-1.20.1-2.0.0.jar`** → положить в `.minecraft/mods`.
+**`interloper-1.20.1-2.0.1.jar`** → положить в `.minecraft/mods`.
 Нужен **Forge 47.x для Minecraft 1.20.1** и **Java 17**.
 
 Сборка из исходников: `./gradlew build` → `build/libs/`.
@@ -93,9 +93,31 @@ disconnect           выйти из мира с ошибкой
 
 ## Серверные команды
 
-`/interloper help`, `/interloper hunt`, `/interloper void`, `/interloper exit`,
-`/interloper console`, `/interloper demo <1-5>`, `/interloper spawn <entity>`.
-Алиас `/interlope`.
+`/interloper help`, `/interloper hunt [игрок]`, `/interloper stop [игрок]`,
+`/interloper reset`, `/interloper void`, `/interloper exit`, `/interloper console`,
+`/interloper demo <1-5>`, `/interloper spawn <entity>`. Алиас `/interlope`.
+
+## Мультиплеер
+
+Мод рассчитан на сервер с несколькими игроками:
+
+* каждая сущность привязана к **одному** игроку (UUID) и не переключается на того, кто ближе;
+* смерть, выход или кик игрока завершает только его охоту — у остальных ничего не ломается;
+* всё, что NPC делает с игроком (переход в source void, краш с `error:crash_by-error`),
+  применяется только к этому игроку;
+* консоль, демо-записи, экранные эффекты и структуры в пустоте — на каждого свои;
+* в source void у каждого игрока своя точка появления;
+* после вылета игроку даётся кулдаун (по умолчанию 3 минуты), в течение которого Interloper
+  не крашит его повторно, а просто исчезает при касании;
+* `/interloper stop <игрок>` (OP) — аварийно завершить все охоты против игрока.
+
+## Исправления в 2.0.1
+
+* NPC, убивший игрока, теперь **исчезает**, а не остаётся на месте смерти.
+* Interloper удаляется перед вылетом с `error:crash_by-error`, а при входе игрока чистятся
+  все охоты прошлой сессии — **бесконечный кик по кругу исправлен**.
+* Добавлен кулдаун краша (`entities.crash_cooldown_seconds`).
+* Полноценная поддержка мультиплеера (см. выше).
 
 ---
 

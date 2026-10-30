@@ -56,7 +56,7 @@ public final class VoidDirector {
             if (nearby > 3) {
                 continue;
             }
-            spawnOne(level, player, level);
+            spawnOne(level, player);
         }
 
         if (level.getGameTime() % 200L == 0L) {
@@ -75,8 +75,7 @@ public final class VoidDirector {
         }
     }
 
-    private static void spawnOne(ServerLevel level, net.minecraft.server.level.ServerPlayer player,
-                                 ServerLevel unused) {
+    private static void spawnOne(ServerLevel level, net.minecraft.server.level.ServerPlayer player) {
         EntityType<?> type = VOID_MOBS[level.getRandom().nextInt(VOID_MOBS.length)];
         Mob mob = (Mob) type.create(level);
         if (mob == null) {

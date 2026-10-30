@@ -29,10 +29,7 @@ public final class ModBlocks {
     public static final RegistryObject<Block> SOURCE_FLOOR = BLOCKS.register("source_floor",
             () -> new Block(BlockBehaviour.Properties.copy(Blocks.STONE)
                     .strength(-1.0F, 3600000.0F)
-                    .sound(SoundType.STONE)
-                    .noOcclusion()
-                    .isValidSpawn((state, level, pos, type) -> false)
-                    .isRedstoneConductor((state, level, pos) -> false)));
+                    .sound(SoundType.STONE)));
 
     public static final RegistryObject<Item> ENGINE_TERMINAL_ITEM = ModItems.ITEMS.register("engine_terminal",
             () -> new BlockItem(ENGINE_TERMINAL.get(), new Item.Properties()));

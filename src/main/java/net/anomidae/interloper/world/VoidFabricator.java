@@ -22,15 +22,15 @@ public final class VoidFabricator {
     private static final Map<ServerLevel, Set<Long>> DECORATED = new HashMap<>();
 
     public static void ensureSpawn(ServerLevel level) {
+        decorate(level, 0, 0, level.getRandom());
         // Clear anything that might have grown on the spawn pad.
-        for (int x = -4; x <= 4; x++) {
-            for (int z = -4; z <= 4; z++) {
-                for (int y = 0; y < 8; y++) {
+        for (int x = -5; x <= 5; x++) {
+            for (int z = -5; z <= 5; z++) {
+                for (int y = 0; y < 10; y++) {
                     level.setBlock(new BlockPos(x, SourceVoid.FLOOR_Y + y, z), Blocks.AIR.defaultBlockState(), 2);
                 }
             }
         }
-        decorate(level, 0, 0, level.getRandom());
     }
 
     public static void tick(ServerLevel level) {

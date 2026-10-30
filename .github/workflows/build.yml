@@ -47,7 +47,71 @@ jobs:
             echo "::error title=javac::$(echo "$line" | head -c 900)"
           done
           echo "::error title=errors::$(grep -c "error:" build.log || true) javac errors"
-          echo "::error title=build-tail::$(grep -v -E '^\s+at |^\s*$' build.log | tail -12 | tr '\n' '|' | head -c 900)"
+
+      - name: Inspect jar
+        if: success()
+        shell: bash
+        run: |
+          set -e
+          JAR=$(ls build/libs/interloper-*.jar | head -1)
+          echo "::notice title=jar::$JAR ($(du -h "$JAR" | cut -f1), $(unzip -l "$JAR" | tail -1 | awk '{print $2}') entries)"
+          unzip -l "$JAR" | tail -3
+
+      - name: Validate jar contents
+        if: success()
+        shell: bash
+        run: |
+          set -e
+          JAR=$(ls build/libs/interloper-*.jar | head -1)
+          FAIL=0
+          for f in \
+            META-INF/mods.toml \
+            assets/interloper/lang/en_us.json \
+            assets/interloper/lang/ru_ru.json \
+            assets/interloper/textures/entity/interloper.png \
+            assets/interloper/textures/entity/interloper_corrupt.png \
+            assets/interloper/textures/entity/corrupted_npc.png \
+            assets/interloper/textures/entity/crasher.png \
+            assets/interloper/textures/entity/vrad.png \
+            assets/interloper/textures/entity/cone.png \
+            assets/interloper/textures/entity/dmnpc.png \
+            assets/interloper/textures/entity/skyghost_skin.png \
+            assets/interloper/textures/block/source_floor.png \
+            assets/interloper/textures/item/console.png \
+            assets/interloper/models/item/console.json \
+            assets/interloper/models/block/source_floor.json \
+            assets/interloper/blockstates/source_floor.json \
+            data/interloper/dimension/source_void.json \
+            data/interloper/dimension_type/source_void.json \
+            data/interloper/worldgen/biome/source_void.json \
+            data/interloper/damage_type/interloped.json \
+            net/anomidae/interloper/Interloper.class \
+            net/anomidae/interloper/item/ConsoleItem.class \
+            net/anomidae/interloper/client/screen/ConsoleScreen.class \
+            net/anomidae/interloper/entity/InterloperEntity.class \
+            net/anomidae/interloper/entity/InterloperCorruptEntity.class \
+            net/anomidae/interloper/entity/CorruptedNpcEntity.class \
+            net/anomidae/interloper/entity/VradEntity.class \
+            net/anomidae/interloper/entity/CrasherEntity.class \
+            net/anomidae/interloper/entity/ConeEntity.class \
+            net/anomidae/interloper/entity/DmNpcEntity.class \
+            net/anomidae/interloper/entity/SkyghostEntity.class \
+            net/anomidae/interloper/world/SourceVoid.class ; do
+            if ! unzip -l "$JAR" "$f" > /dev/null 2>&1; then
+              echo "::error title=missing::$f"
+              FAIL=1
+            fi
+          done
+          unzip -p "$JAR" META-INF/mods.toml | grep -q 'modId="interloper"' || { echo "::error title=mods.toml::modId missing"; FAIL=1; }
+          exit $FAIL
+
+      - name: Upload jar artifact
+        if: success()
+        uses: actions/upload-artifact@v4
+        with:
+          name: interloper-jar
+          path: build/libs/interloper-*.jar
+          if-no-files-found: error
 
       - name: Upload build log
         if: failure()
@@ -57,17 +121,59 @@ jobs:
           path: build.log
           if-no-files-found: ignore
 
-      - name: Upload jar artifact
-        if: success()
-        uses: actions/upload-artifact@v4
-        with:
-          name: interloper-jar
-          path: build/libs/*.jar
-          if-no-files-found: error
-
       - name: Upload to release
         if: startsWith(github.ref, 'refs/tags/v')
         uses: softprops/action-gh-release@v2
         with:
-          files: build/libs/*.jar
+          files: build/libs/interloper-*.jar
           generate_release_notes: true
+
+  smoke-server:
+    name: Dedicated server smoke test
+    runs-on: ubuntu-latest
+    needs: build
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Set up JDK 17
+        uses: actions/setup-java@v4
+        with:
+          distribution: temurin
+          java-version: '17'
+
+      - name: Set up Gradle
+        uses: gradle/actions/setup-gradle@v4
+
+      - name: Run dedicated server for a while
+        shell: bash
+        run: |
+          set +e
+          chmod +x ./gradlew
+          mkdir -p run
+          echo "eula=true" > run/eula.txt
+          printf 'online-mode=false\nlevel-name=smoke\nspawn-protection=0\ngenerate-structures=false\nsync-chunk-writes=false\n' > run/server.properties
+          timeout 360 ./gradlew runServer --no-daemon 2>&1 | tee server.log
+          echo "=== interesting log lines ==="
+          grep -n -E "Done \\(|Exception|Caused by|Failed|ERROR|error" server.log | grep -v -E "at |SLF4J|log4j" | head -30
+          echo "=== mod load check ==="
+          grep -c "INTERLOPER" server.log || true
+          if ! grep -q "Done (" server.log; then
+            echo "::error title=server::dedicated server did not finish starting"
+            grep -n -E "Exception|Caused by|Failed|ERROR" server.log | head -10 | while IFS= read -r line; do
+              echo "::error title=server::$line"
+            done
+            exit 1
+          fi
+          if grep -q -E "Failed to load mod|Missing or unsupported|Exception in server tick loop" server.log; then
+            echo "::error title=server::server reported a fatal problem"
+            exit 1
+          fi
+
+      - name: Upload server log
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: server-log
+          path: server.log
+          if-no-files-found: ignore

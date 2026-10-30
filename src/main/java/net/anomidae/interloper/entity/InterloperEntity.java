@@ -16,7 +16,6 @@ import net.minecraft.network.syncher.SynchedEntityData;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.sounds.SoundEvent;
-import net.minecraft.sounds.SoundEvents;
 import net.minecraft.sounds.SoundSource;
 import net.minecraft.util.RandomSource;
 import net.minecraft.world.damagesource.DamageSource;
@@ -259,10 +258,5 @@ public class InterloperEntity extends Monster {
     public static boolean checkSpawnRules(EntityType<InterloperEntity> type, ServerLevelAccessor level,
                                           MobSpawnType reason, BlockPos pos, RandomSource random) {
         return true;
-    }
-
-    static {
-        // Bells are the last thing you hear before he arrives.
-        SoundEvents.BELL_BLOCK.getName();
     }
 }

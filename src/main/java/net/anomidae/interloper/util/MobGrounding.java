@@ -14,7 +14,8 @@ public final class MobGrounding {
      * Returns the y coordinate of the surface below the entity, or the entity y if nothing was found.
      */
     public static double floorY(Level level, Entity entity, int maxDrop) {
-        BlockPos.MutableBlockPos pos = BlockPos.MutableBlockPos.containing(entity.getX(), entity.getY(), entity.getZ());
+        BlockPos.MutableBlockPos pos = new BlockPos.MutableBlockPos();
+        pos.set(entity.getX(), entity.getY(), entity.getZ());
         for (int i = 0; i < maxDrop; i++) {
             BlockState state = level.getBlockState(pos);
             if (!state.isAir() && state.isCollisionShapeFullBlock(level, pos)) {

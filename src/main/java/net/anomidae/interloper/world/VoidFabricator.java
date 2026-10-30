@@ -51,7 +51,7 @@ public final class VoidFabricator {
                         if (!done.add(key)) {
                             continue;
                         }
-                        RandomSource random = RandomSource.create(level.getSeed() * 31L + key * 7919L);
+                        RandomSource random = RandomSource.create(mix(key));
                         decorate(level, cx, cz, random);
                     }
                 }
@@ -59,6 +59,13 @@ public final class VoidFabricator {
         } finally {
             level.getProfiler().pop();
         }
+    }
+
+    private static long mix(long key) {
+        long value = key * 6364136223846793005L + 1442695040888963407L;
+        value ^= value >>> 33;
+        value *= 0xff51afd7ed558ccdL;
+        return value ^ (value >>> 29);
     }
 
     private static void place(ServerLevel level, int x, int y, int z, BlockState state) {

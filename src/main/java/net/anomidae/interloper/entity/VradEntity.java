@@ -1,5 +1,6 @@
 package net.anomidae.interloper.entity;
 
+import net.anomidae.interloper.network.ConsoleLinePacket;
 import net.anomidae.interloper.network.ModNetwork;
 import net.anomidae.interloper.network.ScreenEffectPacket;
 import net.anomidae.interloper.registry.ModSounds;
@@ -52,7 +53,7 @@ public class VradEntity extends SourceEntity {
             this.beepTimer = 40 + this.random.nextInt(50);
             this.level().playSound(null, this.blockPosition(), ModSounds.STATIC.get(), SoundSource.HOSTILE, 0.5F, 1.8F);
             if (distance < 32.0D) {
-                ModNetwork.toPlayer(player, new com.anomidae.interloper.network.ConsoleLinePacket(
+                ModNetwork.toPlayer(player, new ConsoleLinePacket(
                         SourceText.randomError(this.random), 0xFFFF7A00, false));
             }
         }
@@ -68,7 +69,7 @@ public class VradEntity extends SourceEntity {
         for (int i = 0; i < 5; i++) {
             final int index = i;
             ServerScheduler.schedule(6 + i * 8, () -> ModNetwork.toPlayer(player,
-                    new com.anomidae.interloper.network.ConsoleLinePacket(
+                    new ConsoleLinePacket(
                             SourceText.randomError(player.getRandom()), 0xFFFF7A00, true)));
         }
         ServerScheduler.schedule(70, () -> {

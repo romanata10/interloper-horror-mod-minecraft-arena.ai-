@@ -1,9 +1,9 @@
-name: Build Forge Mod
+name: Build
 
 on:
   push:
-    branches: [ '**' ]
-    tags: [ 'v*' ]
+    branches: ['**']
+    tags: ['v*']
   workflow_dispatch:
 
 permissions:
@@ -11,9 +11,11 @@ permissions:
 
 jobs:
   build:
+    name: Build mod jar
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v4
+      - name: Checkout
+        uses: actions/checkout@v4
 
       - name: Set up JDK 17
         uses: actions/setup-java@v4
@@ -23,19 +25,66 @@ jobs:
 
       - name: Set up Gradle
         uses: gradle/actions/setup-gradle@v4
-        with:
-          gradle-version: '8.1.1'
+
+      - name: Make gradlew executable
+        run: chmod +x ./gradlew
 
       - name: Build with Gradle
-        run: gradle build --no-daemon --stacktrace
+        shell: bash
+        run: |
+          set -o pipefail
+          ./gradlew build --no-daemon --stacktrace 2>&1 | tee build.log
+
+      - name: Report build log
+        if: failure()
+        run: python3 tools/ci_report_log.py build.log
 
       - name: Show artifacts
-        if: always()
-        run: ls -la build/libs || true
+        run: ls -lh build/libs
 
-      - name: Upload jar
+      - name: Inspect jar
+        run: |
+          JAR=$(ls build/libs/*.jar | head -1)
+          echo "jar: $JAR"
+          unzip -l "$JAR" | tail -5
+          echo "--- mods.toml ---"
+          unzip -p "$JAR" META-INF/mods.toml
+          echo "--- resource counts ---"
+          unzip -l "$JAR" | grep -c "assets/interloper" || true
+
+      - name: Validate jar
+        run: |
+          set -e
+          JAR=$(ls build/libs/*.jar | head -1)
+          for f in \
+            META-INF/mods.toml \
+            assets/interloper/lang/en_us.json \
+            assets/interloper/lang/ru_ru.json \
+            assets/interloper/sounds.json \
+            assets/interloper/textures/entity/interloper.png \
+            assets/interloper/textures/entity/skyghost.png \
+            assets/interloper/sounds/whisper.ogg \
+            assets/interloper/sounds/capture.ogg \
+            data/interloper/damage_type/interloped.json \
+            data/interloper/recipes/umbrella.json \
+            data/interloper/advancements/root.json \
+            net/anomidae/interloper/Interloper.class; do
+            unzip -l "$JAR" "$f" > /dev/null
+          done
+          unzip -p "$JAR" META-INF/mods.toml | grep -q 'modId="interloper"'
+          unzip -p "$JAR" META-INF/mods.toml | grep -q 'version="1.0.0"'
+          echo "jar validation passed"
+
+      - name: Upload jar artifact
         uses: actions/upload-artifact@v4
         with:
           name: interloper-jar
           path: build/libs/*.jar
-          if-no-files-found: warn
+          if-no-files-found: error
+
+      - name: Upload to release
+        if: startsWith(github.ref, 'refs/tags/v')
+        uses: softprops/action-gh-release@v2
+        with:
+          files: build/libs/*.jar
+          generate_release_notes: true

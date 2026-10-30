@@ -1,22 +1,33 @@
-# Gradle
+# Gradle / build output
 .gradle/
 build/
 out/
+classes/
 !gradle/wrapper/gradle-wrapper.jar
-
-# Forge dev env
-run/
-runs/
-logs/
-*.log
 
 # IDE
 .idea/
 *.iml
 *.ipr
 *.iws
-.vscode/
 .settings/
 .classpath
 .project
+.vscode/
 bin/
+run/
+run-*/
+
+# OS
+.DS_Store
+Thumbs.db
+
+# logs / crash reports
+logs/
+crash-reports/
+*-latest.log
+
+# python
+__pycache__/
+*.pyc
+.venv/

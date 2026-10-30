@@ -1,29 +1,29 @@
 modLoader="javafml"
-loaderVersion="[47,)"
-license="MIT"
-issueTrackerURL="https://github.com/romanata10/interloper-horror-mod-minecraft-arena.ai-/issues"
+loaderVersion="${loader_version_range}"
+license="${mod_license}"
 
 [[mods]]
-modId="interloper"
-version="1.0.0"
-displayName="Interloper: Source Void"
-authors="Anomidae-inspired (Arena.ai build)"
+modId="${mod_id}"
+version="${mod_version}"
+displayName="${mod_name}"
+authors="${mod_authors}"
 description='''
-A Source-engine style ARG horror mod inspired by Anomidae's Interloper.
-The console from a dead engine, the Interloper with his umbrella, the Source Void,
-VRAD errors, corrupted NPCs and the Sky Ghost.
+${mod_description}
+
+WARNING: contains flashing imagery, loud sounds and jump scares. Flashing effects can be disabled in the config.
 '''
+logoFile="interloper_logo.png"
 
-[[dependencies.interloper]]
-    modId="forge"
-    mandatory=true
-    versionRange="[47,)"
-    ordering="NONE"
-    side="BOTH"
+[[dependencies.${mod_id}]]
+modId="forge"
+mandatory=true
+versionRange="${forge_version_range}"
+ordering="NONE"
+side="BOTH"
 
-[[dependencies.interloper]]
-    modId="minecraft"
-    mandatory=true
-    versionRange="[1.20.1,1.21)"
-    ordering="NONE"
-    side="BOTH"
+[[dependencies.${mod_id}]]
+modId="minecraft"
+mandatory=true
+versionRange="${minecraft_version_range}"
+ordering="NONE"
+side="BOTH"

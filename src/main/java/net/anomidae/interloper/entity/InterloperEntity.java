@@ -58,9 +58,9 @@ public class InterloperEntity extends Monster {
     public static AttributeSupplier.Builder createAttributes() {
         return Monster.createMonsterAttributes()
                 .add(Attributes.MAX_HEALTH, 120.0D)
-                .add(Attributes.MOVEMENT_SPEED, 0.27D)
+                .add(Attributes.MOVEMENT_SPEED, 0.25D)
                 .add(Attributes.FOLLOW_RANGE, 64.0D)
-                .add(Attributes.ATTACK_DAMAGE, 8.0D)
+                .add(Attributes.ATTACK_DAMAGE, 6.0D)
                 .add(Attributes.KNOCKBACK_RESISTANCE, 1.0D)
                 .add(Attributes.ARMOR, 8.0D);
     }
@@ -204,7 +204,7 @@ public class InterloperEntity extends Monster {
         var speed = this.getAttribute(Attributes.MOVEMENT_SPEED);
         if (speed != null) {
             LivingEntity target = this.getTarget();
-            speed.setBaseValue(target != null ? 0.36D : 0.22D);
+            speed.setBaseValue(target != null ? 0.30D : 0.21D);
         }
     }
 
@@ -215,7 +215,7 @@ public class InterloperEntity extends Monster {
             ModNetwork.toPlayer(player, new ScreenEffectPacket(ScreenEffectPacket.Effect.CAPTURE, 70, 1.0F));
             ModNetwork.toPlayer(player, new ScreenEffectPacket(ScreenEffectPacket.Effect.GLITCH, 120, 1.0F));
             this.level().playSound(null, player.blockPosition(), ModSounds.CAPTURE.get(), SoundSource.HOSTILE, 1.0F, 0.75F);
-            player.hurt(ModDamage.interloped(this.level()), 6.0F);
+            player.hurt(ModDamage.interloped(this.level()), 4.0F);
         }
         return hit;
     }

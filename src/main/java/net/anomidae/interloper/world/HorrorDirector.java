@@ -9,6 +9,7 @@ import net.anomidae.interloper.network.ScreenEffectPacket;
 import net.anomidae.interloper.registry.ModEntities;
 import net.anomidae.interloper.network.ConsoleLinePacket;
 import net.anomidae.interloper.registry.ModSounds;
+import net.anomidae.interloper.util.Hunters;
 import net.anomidae.interloper.util.SourceText;
 import net.minecraft.ChatFormatting;
 import net.minecraft.core.BlockPos;
@@ -106,6 +107,7 @@ public final class HorrorDirector {
         } else {
             if (InterloperConfig.NATURAL_INTERLOPER.get()
                     && level.isNight()
+                    && !Hunters.isOnCrashCooldown(player)
                     && random.nextInt(Math.max(1, InterloperConfig.INTERLOPER_SPAWN_CHANCE.get())) == 0) {
                 startHunt(level, player, random);
             }
@@ -131,6 +133,7 @@ public final class HorrorDirector {
         double z = player.getZ() - look.z * distance;
         double y = player.getY() + 1.0D + random.nextDouble() * 2.0D;
         ghost.moveTo(x, y, z, random.nextFloat() * 360.0F, 0.0F);
+        ghost.bindPlayer(player.getUUID());
         level.addFreshEntity(ghost);
         level.playSound(null, new BlockPos((int) x, (int) y, (int) z), ModSounds.WHISPER.get(),
                 SoundSource.AMBIENT, 0.7F, 0.6F);
@@ -146,6 +149,7 @@ public final class HorrorDirector {
         double x = player.getX() - look.x * distance;
         double z = player.getZ() - look.z * distance;
         interloper.moveTo(x, player.getY(), z, random.nextFloat() * 360.0F, 0.0F);
+        interloper.bindPlayer(player.getUUID());
         interloper.setTarget(player);
         interloper.setHunting(true);
         level.addFreshEntity(interloper);

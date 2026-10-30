@@ -46,6 +46,7 @@ public class DmNpcEntity extends Monster {
         if (this.level().isClientSide) {
             return;
         }
+        this.checkLifetime();
         if (this.tickCount % 20 != 0) {
             return;
         }
@@ -67,5 +68,20 @@ public class DmNpcEntity extends Monster {
     @Override
     public boolean removeWhenFarAway(double distance) {
         return false;
+    }
+
+    @Override
+    public void addAdditionalSaveData(net.minecraft.nbt.CompoundTag tag) {
+        super.addAdditionalSaveData(tag);
+        tag.putInt("DmLife", this.tickCount);
+    }
+
+    /**
+     * It is not immortal: it goes away after five minutes or when nobody is around.
+     */
+    private void checkLifetime() {
+        if (this.tickCount > 20 * 300) {
+            this.discard();
+        }
     }
 }

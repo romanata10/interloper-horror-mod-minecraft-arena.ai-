@@ -5,6 +5,7 @@ import net.anomidae.interloper.entity.InterloperEntity;
 import net.anomidae.interloper.network.ConsoleLinePacket;
 import net.anomidae.interloper.network.ModNetwork;
 import net.anomidae.interloper.registry.ModSounds;
+import net.anomidae.interloper.util.Hunters;
 import net.minecraft.ChatFormatting;
 import net.minecraft.core.registries.Registries;
 import net.minecraft.network.chat.Component;
@@ -41,7 +42,24 @@ public final class SourceVoid {
         level.getChunk(0, 0);
         VoidFabricator.ensureSpawn(level);
 
-        player.teleportTo(level, 0.5D, FLOOR_Y, 0.5D, player.getYRot(), player.getXRot());
+        // every player gets their own spot, so a second player does not land inside the first
+        int offsetX = (int) (Math.abs(player.getUUID().getLeastSignificantBits()) % 9L) - 4;
+        int offsetZ = (int) (Math.abs(player.getUUID().getMostSignificantBits()) % 9L) - 4;
+        double x = offsetX + 0.5D;
+        double z = offsetZ + 0.5D;
+        for (int dx = -1; dx <= 1; dx++) {
+            for (int dz = -1; dz <= 1; dz++) {
+                for (int dy = 0; dy < 3; dy++) {
+                    level.setBlock(new net.minecraft.core.BlockPos(offsetX + dx, FLOOR_Y + dy, offsetZ + dz),
+                            net.minecraft.world.level.block.Blocks.AIR.defaultBlockState(), 2);
+                }
+            }
+        }
+
+        // the chase in the old world is over the moment you are gone
+        Hunters.discardBoundTo(player);
+
+        player.teleportTo(level, x, FLOOR_Y, z, player.getYRot(), player.getXRot());
         player.getPersistentData().putBoolean(InterloperEntity.VOID_FLAG, true);
 
         ModNetwork.toPlayer(player, new ConsoleLinePacket("Loading source_void.bsp", 0xFFCFCFCF, false));

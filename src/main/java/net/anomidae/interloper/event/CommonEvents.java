@@ -8,7 +8,9 @@ import net.anomidae.interloper.network.ConsoleLinePacket;
 import net.anomidae.interloper.network.ModNetwork;
 import net.anomidae.interloper.registry.ModItems;
 import net.anomidae.interloper.registry.ModSounds;
+import net.anomidae.interloper.util.Hunters;
 import net.anomidae.interloper.util.ServerScheduler;
+import net.anomidae.interloper.util.TargetBound;
 import net.anomidae.interloper.world.HorrorDirector;
 import net.anomidae.interloper.world.VoidDirector;
 import net.anomidae.interloper.world.VoidFabricator;
@@ -17,6 +19,7 @@ import net.minecraft.network.chat.Component;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.sounds.SoundSource;
+import net.minecraft.world.entity.Entity;
 import net.minecraft.world.item.ItemStack;
 import net.minecraftforge.event.RegisterCommandsEvent;
 import net.minecraftforge.event.TickEvent;
@@ -45,6 +48,7 @@ public final class CommonEvents {
     @SubscribeEvent
     public static void onServerStopping(ServerStoppingEvent event) {
         ServerScheduler.reset();
+        VoidFabricator.reset();
     }
 
     @SubscribeEvent
@@ -62,6 +66,12 @@ public final class CommonEvents {
         if (!(event.getEntity() instanceof ServerPlayer player)) {
             return;
         }
+
+        // A hunt never survives a reconnect. Anything that was still chasing this
+        // player from a previous session is deleted here, so the Interloper can not
+        // camp the spawn point and crash the same player over and over.
+        Hunters.discardBoundTo(player);
+        ServerScheduler.schedule(20, () -> Hunters.discardBoundTo(player));
 
         boolean firstTime = !player.getPersistentData().getBoolean(CONSOLE_FLAG);
         if (firstTime) {
@@ -91,13 +101,41 @@ public final class CommonEvents {
     }
 
     @SubscribeEvent
+    public static void onLogout(PlayerEvent.PlayerLoggedOutEvent event) {
+        // Leaving the server (or being kicked by a crash) ends the hunt for that
+        // player. Nothing of ours is left behind in the world.
+        if (event.getEntity() instanceof ServerPlayer player) {
+            Hunters.discardBoundTo(player);
+        }
+    }
+
+    @SubscribeEvent
+    public static void onClone(PlayerEvent.Clone event) {
+        if (event.getEntity() instanceof ServerPlayer current && event.getOriginal() instanceof ServerPlayer previous) {
+            Hunters.copyPersistentData(previous, current);
+        }
+    }
+
+    @SubscribeEvent
     public static void onDeath(LivingDeathEvent event) {
         if (!(event.getEntity() instanceof ServerPlayer player)) {
             return;
         }
-        var source = event.getSource().getEntity();
-        if (source instanceof net.anomidae.interloper.entity.SourceEntity
-                || source instanceof net.anomidae.interloper.entity.InterloperEntity) {
+
+        Entity killer = event.getSource().getEntity();
+        if (killer == null) {
+            killer = event.getSource().getDirectEntity();
+        }
+
+        // Whoever did it goes away with you - no leftover NPC waiting on the spawn point.
+        if (killer instanceof TargetBound || killer instanceof net.anomidae.interloper.entity.InterloperEntity) {
+            Hunters.forget(killer);
+            killer.discard();
+        }
+        Hunters.discardBoundTo(player);
+
+        if (killer != null && (killer instanceof net.anomidae.interloper.entity.SourceEntity
+                || killer instanceof net.anomidae.interloper.entity.InterloperEntity)) {
             player.serverLevel().playSound(null, player.blockPosition(), ModSounds.CAPTURE.get(),
                     SoundSource.HOSTILE, 1.0F, 0.6F);
             player.sendSystemMessage(Component.literal("error: entity killed the player without a valid trace")

@@ -139,7 +139,7 @@ public final class InterloperCommand {
 
     private static int executeTerminal(CommandContext<CommandSourceStack> ctx) throws CommandSyntaxException {
         ServerPlayer player = ctx.getSource().getPlayerOrException();
-        var stack = new net.minecraft.world.item.ItemStack(ModItems.ENGINE_TERMINAL_ITEM.get());
+        var stack = new net.minecraft.world.item.ItemStack(net.anomidae.interloper.registry.ModBlocks.ENGINE_TERMINAL_ITEM.get());
         if (!player.getInventory().add(stack)) {
             player.drop(stack, false);
         }

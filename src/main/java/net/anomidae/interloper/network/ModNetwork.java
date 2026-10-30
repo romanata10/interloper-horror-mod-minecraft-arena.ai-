@@ -1,6 +1,7 @@
 package net.anomidae.interloper.network;
 
 import net.anomidae.interloper.Interloper;
+import net.anomidae.interloper.client.ClientPacketHandler;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.fml.DistExecutor;

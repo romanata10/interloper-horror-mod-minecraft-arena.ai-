@@ -16,7 +16,6 @@ public final class ModEntities {
     public static final RegistryObject<EntityType<InterloperEntity>> INTERLOPER = ENTITY_TYPES.register("interloper",
             () -> EntityType.Builder.of(InterloperEntity::new, MobCategory.MONSTER)
                     .sized(0.85F, 3.0F)
-                    .eyeHeight(2.7F)
                     .clientTrackingRange(16)
                     .fireImmune()
                     .build(Interloper.id("interloper").toString()));
@@ -24,7 +23,6 @@ public final class ModEntities {
     public static final RegistryObject<EntityType<SkyghostEntity>> SKYGHOST = ENTITY_TYPES.register("skyghost",
             () -> EntityType.Builder.of(SkyghostEntity::new, MobCategory.MONSTER)
                     .sized(0.7F, 1.1F)
-                    .eyeHeight(0.95F)
                     .clientTrackingRange(16)
                     .fireImmune()
                     .build(Interloper.id("skyghost").toString()));

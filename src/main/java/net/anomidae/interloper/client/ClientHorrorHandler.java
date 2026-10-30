@@ -63,11 +63,11 @@ public final class ClientHorrorHandler {
 
     @SubscribeEvent
     public static void onCameraAngles(ViewportEvent.ComputeCameraAngles event) {
-        float strength = ClientEffects.shakeFactor(event.getPartialTick());
+        float strength = ClientEffects.shakeFactor((float) event.getPartialTick());
         if (strength <= 0.0F) {
             return;
         }
-        float time = event.getPartialTick();
+        float time = (float) event.getPartialTick();
         double amount = 0.9D * strength;
         event.setRoll(event.getRoll() + Math.sin(time * 2.3D) * amount);
         event.setYaw(event.getYaw() + Math.cos(time * 3.1D) * amount * 0.6D);

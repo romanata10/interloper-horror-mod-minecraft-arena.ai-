@@ -43,16 +43,11 @@ jobs:
         if: failure()
         shell: bash
         run: |
-          {
-            echo "### Compile errors"
-            echo '```'
-            grep -n -E "error:" build.log | head -60 || true
-            echo '```'
-            echo "### Tail"
-            echo '```'
-            tail -30 build.log || true
-            echo '```'
-          } >> "$GITHUB_STEP_SUMMARY"
+          grep -n "error:" build.log | head -10 | while IFS= read -r line; do
+            echo "::error title=javac::$(echo "$line" | head -c 900)"
+          done
+          echo "::error title=errors::$(grep -c "error:" build.log || true) javac errors"
+          echo "::error title=build-tail::$(grep -v -E '^\s+at |^\s*$' build.log | tail -12 | tr '\n' '|' | head -c 900)"
 
       - name: Upload build log
         if: failure()

@@ -30,7 +30,15 @@ jobs:
         run: chmod +x ./gradlew
 
       - name: Build with Gradle
-        run: ./gradlew build --no-daemon --stacktrace
+        run: ./gradlew build --no-daemon --stacktrace 2>&1 | tee build.log
+
+      - name: Report build log chunk 1
+        if: failure()
+        run: python3 -c "import pathlib;d=pathlib.Path('build.log').read_text(errors='replace');print('::error::'+d[-6000:].replace(chr(13),'').replace(chr(10),'%0A'))"
+
+      - name: Report build log chunk 2
+        if: failure()
+        run: python3 -c "import pathlib,re;d=pathlib.Path('build.log').read_text(errors='replace');lines=[l for l in d.splitlines() if re.search(r'(?i)error|failed|caused by|could not|what went wrong', l)][:40];print('::error::'+'%0A'.join(lines).replace(chr(13),''))"
 
       - name: Show artifacts
         run: ls -lh build/libs

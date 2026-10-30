@@ -75,6 +75,8 @@ public final class CommonEvents {
             ModNetwork.toPlayer(player, new ConsoleLinePacket("map: minecraft", 0xFFFFFFFF, false));
             ModNetwork.toPlayer(player, new ConsoleLinePacket("> play demo interloper_1   <- press ENTER",
                     0xFFFFFFFF, true));
+            player.sendSystemMessage(Component.translatable("message.interloper.console_given")
+                    .withStyle(ChatFormatting.DARK_GRAY));
         }
 
         if (!InterloperConfig.INTRO_MESSAGE.get()) {

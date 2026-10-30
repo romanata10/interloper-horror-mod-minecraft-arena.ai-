@@ -25,6 +25,7 @@ public class ConsoleScreen extends Screen {
     private final List<String> history = new ArrayList<>();
     private int historyIndex;
     private int scroll;
+    private static boolean demoOffered;
     private boolean prepared;
 
     public ConsoleScreen() {
@@ -35,7 +36,8 @@ public class ConsoleScreen extends Screen {
     protected void init() {
         if (!this.prepared) {
             this.prepared = true;
-            if (ConsoleLog.isEmpty()) {
+            if (!demoOffered) {
+                demoOffered = true;
                 this.input.append("play demo interloper_1");
             }
         }

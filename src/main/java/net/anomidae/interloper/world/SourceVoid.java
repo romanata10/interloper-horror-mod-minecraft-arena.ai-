@@ -58,7 +58,12 @@ public final class SourceVoid {
             return false;
         }
         ServerLevel overworld = server.overworld();
-        player.teleportTo(overworld, player.getX(), 100.0D, player.getZ(), player.getYRot(), player.getXRot());
+        int x = (int) player.getX();
+        int z = (int) player.getZ();
+        overworld.getChunk(x >> 4, z >> 4);
+        int y = overworld.getHeight(net.minecraft.world.level.levelgen.Heightmap.Types.MOTION_BLOCKING, x, z);
+        player.teleportTo(overworld, x + 0.5D, y + 1.0D, z + 0.5D, player.getYRot(), player.getXRot());
+        ModNetwork.toPlayer(player, new ConsoleLinePacket("disconnect", 0xFFB0B0B0, false));
         return true;
     }
 

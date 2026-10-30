@@ -1,0 +1,29 @@
+modLoader="javafml"
+loaderVersion="[47,)"
+license="MIT"
+issueTrackerURL="https://github.com/romanata10/interloper-horror-mod-minecraft-arena.ai-/issues"
+
+[[mods]]
+modId="interloper"
+version="1.0.0"
+displayName="Interloper: Source Void"
+authors="Anomidae-inspired (Arena.ai build)"
+description='''
+A Source-engine style ARG horror mod inspired by Anomidae's Interloper.
+The console from a dead engine, the Interloper with his umbrella, the Source Void,
+VRAD errors, corrupted NPCs and the Sky Ghost.
+'''
+
+[[dependencies.interloper]]
+    modId="forge"
+    mandatory=true
+    versionRange="[47,)"
+    ordering="NONE"
+    side="BOTH"
+
+[[dependencies.interloper]]
+    modId="minecraft"
+    mandatory=true
+    versionRange="[1.20.1,1.21)"
+    ordering="NONE"
+    side="BOTH"

@@ -52,6 +52,29 @@ jobs:
           echo "--- resource counts ---"
           unzip -l "$JAR" | grep -c "assets/interloper" || true
 
+      - name: Validate jar
+        run: |
+          set -e
+          JAR=$(ls build/libs/*.jar | head -1)
+          for f in \
+            META-INF/mods.toml \
+            assets/interloper/lang/en_us.json \
+            assets/interloper/lang/ru_ru.json \
+            assets/interloper/sounds.json \
+            assets/interloper/textures/entity/interloper.png \
+            assets/interloper/textures/entity/skyghost.png \
+            assets/interloper/sounds/whisper.ogg \
+            assets/interloper/sounds/capture.ogg \
+            data/interloper/damage_type/interloped.json \
+            data/interloper/recipes/umbrella.json \
+            data/interloper/advancements/root.json \
+            net/anomidae/interloper/Interloper.class; do
+            unzip -l "$JAR" "$f" > /dev/null
+          done
+          unzip -p "$JAR" META-INF/mods.toml | grep -q 'modId="interloper"'
+          unzip -p "$JAR" META-INF/mods.toml | grep -q 'version="1.0.0"'
+          echo "jar validation passed"
+
       - name: Upload jar artifact
         uses: actions/upload-artifact@v4
         with:

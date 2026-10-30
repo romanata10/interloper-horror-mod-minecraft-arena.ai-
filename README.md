@@ -14,9 +14,9 @@
 
 ## Скачать
 
-Готовый `.jar` лежит в разделе **Releases** этого репозитория:
+Готовый `.jar` — в разделе **Releases**: https://github.com/romanata10/interloper-horror-mod-minecraft-arena.ai-/releases/latest
 
-**`interloper-1.20.1-1.0.0.jar`** → положить в `.minecraft/mods`, нужен **Forge 47.x для 1.20.1**.
+**`interloper-1.20.1-1.0.0.jar`** → положить в `.minecraft/mods`, нужен **Forge 47.x для 1.20.1** (Java 17).
 
 Сборка из исходников: `./gradlew build` → `build/libs/`.
 

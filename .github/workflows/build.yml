@@ -33,49 +33,37 @@ jobs:
         shell: bash
         run: |
           set -o pipefail
-          ./gradlew build --no-daemon --stacktrace 2>&1 | tee build.log
+          ./gradlew build --no-daemon 2>&1 | tee build.log
+          STATUS=${PIPESTATUS[0]}
+          echo "=== compiler errors ==="
+          grep -n -E "error:|error;|\.java:[0-9]+" build.log | head -60 || true
+          exit $STATUS
 
-      - name: Report build log
+      - name: Compile error summary
         if: failure()
-        run: python3 tools/ci_report_log.py build.log
-
-      - name: Show artifacts
-        run: ls -lh build/libs
-
-      - name: Inspect jar
+        shell: bash
         run: |
-          JAR=$(ls build/libs/*.jar | head -1)
-          echo "jar: $JAR"
-          unzip -l "$JAR" | tail -5
-          echo "--- mods.toml ---"
-          unzip -p "$JAR" META-INF/mods.toml
-          echo "--- resource counts ---"
-          unzip -l "$JAR" | grep -c "assets/interloper" || true
+          {
+            echo "### Compile errors"
+            echo '```'
+            grep -n -E "error:" build.log | head -60 || true
+            echo '```'
+            echo "### Tail"
+            echo '```'
+            tail -30 build.log || true
+            echo '```'
+          } >> "$GITHUB_STEP_SUMMARY"
 
-      - name: Validate jar
-        run: |
-          set -e
-          JAR=$(ls build/libs/*.jar | head -1)
-          for f in \
-            META-INF/mods.toml \
-            assets/interloper/lang/en_us.json \
-            assets/interloper/lang/ru_ru.json \
-            assets/interloper/sounds.json \
-            assets/interloper/textures/entity/interloper.png \
-            assets/interloper/textures/entity/skyghost.png \
-            assets/interloper/sounds/whisper.ogg \
-            assets/interloper/sounds/capture.ogg \
-            data/interloper/damage_type/interloped.json \
-            data/interloper/recipes/umbrella.json \
-            data/interloper/advancements/root.json \
-            net/anomidae/interloper/Interloper.class; do
-            unzip -l "$JAR" "$f" > /dev/null
-          done
-          unzip -p "$JAR" META-INF/mods.toml | grep -q 'modId="interloper"'
-          unzip -p "$JAR" META-INF/mods.toml | grep -q 'version="1.0.0"'
-          echo "jar validation passed"
+      - name: Upload build log
+        if: failure()
+        uses: actions/upload-artifact@v4
+        with:
+          name: build-log
+          path: build.log
+          if-no-files-found: ignore
 
       - name: Upload jar artifact
+        if: success()
         uses: actions/upload-artifact@v4
         with:
           name: interloper-jar

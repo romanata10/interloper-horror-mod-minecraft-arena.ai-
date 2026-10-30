@@ -1,0 +1,18 @@
+{
+  "type": "interloper:source_void",
+  "generator": {
+    "type": "minecraft:flat",
+    "settings": {
+      "biome": "interloper:source_void",
+      "lakes": false,
+      "features": false,
+      "layers": [
+        {
+          "block": "interloper:source_floor",
+          "height": 5
+        }
+      ],
+      "structure_overrides": []
+    }
+  }
+}

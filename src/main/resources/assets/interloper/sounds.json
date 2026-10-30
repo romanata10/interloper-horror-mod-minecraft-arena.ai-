@@ -1,0 +1,112 @@
+{
+  "whisper": {
+    "category": "ambient",
+    "subtitle": "subtitles.interloper.whisper",
+    "sounds": [
+      {
+        "name": "interloper:whisper",
+        "stream": false
+      }
+    ]
+  },
+  "static": {
+    "category": "ambient",
+    "subtitle": "subtitles.interloper.static",
+    "sounds": [
+      {
+        "name": "interloper:static",
+        "stream": false
+      }
+    ]
+  },
+  "stinger": {
+    "category": "ambient",
+    "subtitle": "subtitles.interloper.stinger",
+    "sounds": [
+      {
+        "name": "interloper:stinger",
+        "stream": false
+      }
+    ]
+  },
+  "heartbeat": {
+    "category": "player",
+    "subtitle": "subtitles.interloper.heartbeat",
+    "sounds": [
+      {
+        "name": "interloper:heartbeat",
+        "stream": false
+      }
+    ]
+  },
+  "cubemap": {
+    "category": "ambient",
+    "subtitle": "subtitles.interloper.cubemap",
+    "sounds": [
+      {
+        "name": "interloper:cubemap",
+        "stream": false
+      }
+    ]
+  },
+  "terminal": {
+    "category": "block",
+    "subtitle": "subtitles.interloper.terminal",
+    "sounds": [
+      {
+        "name": "interloper:terminal",
+        "stream": false
+      }
+    ]
+  },
+  "umbrella": {
+    "category": "player",
+    "subtitle": "subtitles.interloper.umbrella",
+    "sounds": [
+      {
+        "name": "interloper:umbrella",
+        "stream": false
+      }
+    ]
+  },
+  "interloper_ambient": {
+    "category": "hostile",
+    "subtitle": "subtitles.interloper.interloper_ambient",
+    "sounds": [
+      {
+        "name": "interloper:interloper_ambient",
+        "stream": false
+      }
+    ]
+  },
+  "interloper_hurt": {
+    "category": "hostile",
+    "subtitle": "subtitles.interloper.interloper_hurt",
+    "sounds": [
+      {
+        "name": "interloper:interloper_hurt",
+        "stream": false
+      }
+    ]
+  },
+  "interloper_death": {
+    "category": "hostile",
+    "subtitle": "subtitles.interloper.interloper_death",
+    "sounds": [
+      {
+        "name": "interloper:interloper_death",
+        "stream": false
+      }
+    ]
+  },
+  "capture": {
+    "category": "hostile",
+    "subtitle": "subtitles.interloper.capture",
+    "sounds": [
+      {
+        "name": "interloper:capture",
+        "stream": false
+      }
+    ]
+  }
+}

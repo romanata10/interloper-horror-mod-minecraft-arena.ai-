@@ -1,0 +1,31 @@
+{
+  "display": {
+    "icon": {
+      "item": "interloper:demo_tape"
+    },
+    "title": {
+      "translate": "advancements.interloper.first_demo.title"
+    },
+    "description": {
+      "translate": "advancements.interloper.first_demo.description"
+    },
+    "frame": "task",
+    "show_toast": true,
+    "announce_to_chat": true
+  },
+  "parent": "interloper:root",
+  "criteria": {
+    "got_tape": {
+      "trigger": "minecraft:inventory_changed",
+      "conditions": {
+        "items": [
+          {
+            "items": [
+              "interloper:demo_tape"
+            ]
+          }
+        ]
+      }
+    }
+  }
+}

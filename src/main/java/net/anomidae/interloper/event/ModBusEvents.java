@@ -63,15 +63,18 @@ public final class ModBusEvents {
         registerVoidMob(event, ModEntities.BROKEN_CHARACTER.get());
     }
 
+    /**
+     * Void mobs may exist at any light level, day or night, but never from a spawn egg.
+     */
     private static <T extends net.minecraft.world.entity.Entity> void registerVoidMob(
             SpawnPlacementRegisterEvent event,
             net.minecraft.world.entity.EntityType<T> type) {
         event.register(type,
                 SpawnPlacements.Type.NO_RESTRICTIONS,
                 Heightmap.Types.MOTION_BLOCKING_NO_LEAVES,
-                (entityType, level, reason, pos, random) -> reason != net.minecraft.world.entity.MobSpawnType.SPAWN_EGG
-                        && net.minecraft.world.entity.monster.Monster.checkAnyLightMonsterSpawnRules(
-                                entityType, level, reason, pos, random),
+                (entityType, level, reason, pos, random) ->
+                        reason != net.minecraft.world.entity.MobSpawnType.SPAWN_EGG
+                                && level.getBlockState(pos.below()).isSolidRender(level, pos.below()),
                 SpawnPlacementRegisterEvent.Operation.REPLACE);
     }
 

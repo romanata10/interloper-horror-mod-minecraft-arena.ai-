@@ -202,6 +202,17 @@ jobs:
             echo "::error title=server::server reported a fatal problem"
             exit 1
           fi
+          for dim in interloper:source_void interloper:xbox_360_dreams interloper:white_door_bsp; do
+            if ! grep -q "$dim" server.log; then
+              echo "::error title=dimension::$dim was never created"
+              exit 1
+            fi
+            echo "dimension loaded: $dim"
+          done
+          if grep -q -E "Couldn't parse|Failed to parse|Unable to load|Unknown dimension|datapack" server.log; then
+            echo "::warning title=datapack::datapack warnings found in the server log"
+            grep -n -E "Couldn't parse|Failed to parse|Unable to load|Unknown dimension" server.log | head -5
+          fi
 
       - name: Upload server log
         if: always()

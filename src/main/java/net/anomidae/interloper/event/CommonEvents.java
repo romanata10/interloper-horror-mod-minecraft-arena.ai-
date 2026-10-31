@@ -146,11 +146,6 @@ public final class CommonEvents {
         if (!message.startsWith("!interloper") && !message.startsWith("!hunt")) {
             return;
         }
-        if (player.getServer() != null && !player.getServer().isSingleplayer()) {
-            // a quiet word with whoever runs the server is still required
-            net.anomidae.interloper.item.ConsoleCommands.fsky(player);
-            return;
-        }
         DemoSequence.spawnHunter(player, true);
     }
 

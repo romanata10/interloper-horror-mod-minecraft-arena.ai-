@@ -128,7 +128,7 @@ public final class HorrorOverlay {
             gg.drawString(mc.font, "XBOX 360 DREAMS", 8, 8, 0xFFB6FF62);
             gg.drawString(mc.font, "achievement unlocked: you are still here", 8, 20, 0xFF8CFF00);
         }
-        gg.drawString(mc.font, "gamerscore: " + (mc.player == null ? 0 : mc.player.getXpLevel() * 100), 8, 32, 0xFF7ADB4A);
+        gg.drawString(mc.font, "gamerscore: " + (mc.player == null ? 0 : mc.player.experienceLevel * 100), 8, 32, 0xFF7ADB4A);
         gg.drawString(mc.font, "players: 1", width - 8 - mc.font.width("players: 1"), 8, 0xFF7ADB4A);
         gg.drawString(mc.font, "disk 1 / source engine", width - 8 - mc.font.width("disk 1 / source engine"),
                 height - 14, 0xFF5FA83C);

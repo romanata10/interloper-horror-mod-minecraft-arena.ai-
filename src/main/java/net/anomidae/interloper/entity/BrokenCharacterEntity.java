@@ -60,11 +60,15 @@ public class BrokenCharacterEntity extends Monster {
 
     @Override
     public void tick() {
-        // Deliberately not calling super: no movement, no looking, no AI.
         if (this.tickCount == 0 && !this.level().isClientSide) {
             this.setVariant(this.random.nextInt(VARIANTS));
         }
-        this.tickCount++;
+        super.tick();
+        // it stands where it was put down
+        this.setDeltaMovement(0.0D, 0.0D, 0.0D);
+        this.setYRot(this.getYRot());
+        this.yBodyRot = this.getYRot();
+        this.yHeadRot = 0.0F;
     }
 
     @Override

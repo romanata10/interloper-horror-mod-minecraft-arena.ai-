@@ -91,8 +91,25 @@ jobs:
             assets/interloper/models/block/source_floor.json \
             assets/interloper/blockstates/source_floor.json \
             data/interloper/dimension/source_void.json \
+            data/interloper/dimension/xbox_360_dreams.json \
+            data/interloper/dimension/white_door_bsp.json \
             data/interloper/dimension_type/source_void.json \
+            data/interloper/dimension_type/xbox_360_dreams.json \
+            data/interloper/dimension_type/white_door_bsp.json \
             data/interloper/worldgen/biome/source_void.json \
+            data/interloper/worldgen/biome/xbox_360_dreams.json \
+            data/interloper/worldgen/biome/white_door_bsp.json \
+            data/interloper/forge/biome_modifier/add_void_mob_spawns.json \
+            assets/interloper/blockstates/missing_texture.json \
+            assets/interloper/blockstates/white_door.json \
+            assets/interloper/blockstates/xbox_grass.json \
+            assets/interloper/textures/block/missing_texture.png \
+            assets/interloper/textures/block/xbox_grass.png \
+            assets/interloper/textures/block/portal_panel.png \
+            assets/interloper/textures/entity/broken_scientist.png \
+            assets/interloper/textures/item/interloper_umbrella.png \
+            assets/interloper/textures/item/white_door_key.png \
+            assets/interloper/models/item/interloper_umbrella.json \
             data/interloper/damage_type/interloped.json \
             net/anomidae/interloper/Interloper.class \
             net/anomidae/interloper/item/ConsoleItem.class \
@@ -105,7 +122,14 @@ jobs:
             net/anomidae/interloper/entity/ConeEntity.class \
             net/anomidae/interloper/entity/DmNpcEntity.class \
             net/anomidae/interloper/entity/SkyghostEntity.class \
-            net/anomidae/interloper/world/SourceVoid.class ; do
+            net/anomidae/interloper/world/SourceVoid.class \
+            net/anomidae/interloper/world/XboxDreams.class \
+            net/anomidae/interloper/world/WhiteDoor.class \
+            net/anomidae/interloper/world/Dimensions.class \
+            net/anomidae/interloper/world/XboxFabricator.class \
+            net/anomidae/interloper/entity/BrokenCharacterEntity.class \
+            net/anomidae/interloper/item/InterloperUmbrellaItem.class \
+            net/anomidae/interloper/block/WhiteDoorBlock.class ; do
             if ! unzip -l "$JAR" "$f" > /dev/null 2>&1; then
               echo "::error title=missing::$f"
               FAIL=1

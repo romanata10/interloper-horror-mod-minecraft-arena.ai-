@@ -60,7 +60,7 @@ public final class VoidDirector {
 
         // everyone who falls through the hole in the floor wakes up in the dashboard
         for (var player : players) {
-            if (player.getY() < SourceVoid.FLOOR_Y - 6) {
+            if (player.getY() < SourceVoid.FLOOR_Y - 4) {
                 XboxDreams.enter(player);
                 return;
             }
@@ -123,7 +123,7 @@ public final class VoidDirector {
         }
         // falling out of the dream drops you back into the void
         for (var player : players) {
-            if (player.getY() < XboxDreams.FLOOR_Y - 8) {
+            if (player.getY() < XboxDreams.FLOOR_Y - 4) {
                 SourceVoid.enter(player);
                 return;
             }

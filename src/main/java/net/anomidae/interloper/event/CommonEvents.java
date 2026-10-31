@@ -64,6 +64,7 @@ public final class CommonEvents {
         }
         HorrorDirector.onLevelTick(event);
         VoidFabricator.tick(level);
+        XboxFabricator.tick(level);
         VoidDirector.tick(level);
     }
 

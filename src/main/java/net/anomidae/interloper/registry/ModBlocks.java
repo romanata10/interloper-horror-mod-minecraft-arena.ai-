@@ -70,7 +70,7 @@ public final class ModBlocks {
                     .strength(2.0F, 6.0F).sound(SoundType.STONE)));
 
     public static final RegistryObject<Block> WHITE_DOOR = BLOCKS.register("white_door",
-            () -> new WhiteDoorBlock(BlockBehaviour.Properties.copy(Blocks.IRON_DOOR)
+            () -> new WhiteDoorBlock(BlockBehaviour.Properties.copy(Blocks.QUARTZ_BLOCK)
                     .strength(3.0F, 1200.0F).sound(SoundType.METAL), false));
 
     public static final RegistryObject<Block> WHITE_LOCK = BLOCKS.register("white_lock",

@@ -40,6 +40,7 @@ public final class SourceVoid {
         Dimensions.moveTo(player, Dimensions.SOURCE_VOID, offsetX + 0.5D, FLOOR_Y, offsetZ + 0.5D,
                 player.getYRot(), true);
         player.getPersistentData().putBoolean(InterloperEntity.VOID_FLAG, true);
+        SkyboxWatcher.markVoid(player);
 
         ModNetwork.toPlayer(player, new ConsoleLinePacket("Loading source_void.bsp", 0xFFCFCFCF, false));
         ModNetwork.toPlayer(player, new ConsoleLinePacket("source void: minecraft", 0xFFFFFFFF, false));

@@ -1,6 +1,7 @@
 package net.anomidae.interloper.client;
 
 import net.anomidae.interloper.Interloper;
+import net.anomidae.interloper.client.model.BoxModel;
 import net.anomidae.interloper.client.model.BrokenVillagerModel;
 import net.anomidae.interloper.client.model.ConeModel;
 import net.anomidae.interloper.client.model.DmNpcModel;
@@ -16,7 +17,9 @@ import net.anomidae.interloper.client.render.DmNpcRenderer;
 import net.anomidae.interloper.client.render.InterloperCorruptRenderer;
 import net.anomidae.interloper.client.render.InterloperRenderer;
 import net.anomidae.interloper.client.render.SkyghostRenderer;
+import net.anomidae.interloper.client.render.VoidProbeRenderer;
 import net.anomidae.interloper.client.render.VradRenderer;
+import net.anomidae.interloper.client.render.WhiteCubeRenderer;
 import net.anomidae.interloper.registry.ModEntities;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.client.event.EntityRenderersEvent;
@@ -36,6 +39,8 @@ public final class ClientSetup {
         event.registerEntityRenderer(ModEntities.CONE.get(), ConeRenderer::new);
         event.registerEntityRenderer(ModEntities.DM_NPC.get(), DmNpcRenderer::new);
         event.registerEntityRenderer(ModEntities.BROKEN_CHARACTER.get(), BrokenCharacterRenderer::new);
+        event.registerEntityRenderer(ModEntities.VOID_PROBE.get(), VoidProbeRenderer::new);
+        event.registerEntityRenderer(ModEntities.WHITE_CUBE.get(), WhiteCubeRenderer::new);
     }
 
     @SubscribeEvent
@@ -47,6 +52,7 @@ public final class ClientSetup {
         event.registerLayerDefinition(ConeModel.LAYER, ConeModel::createBodyLayer);
         event.registerLayerDefinition(DmNpcModel.LAYER, DmNpcModel::createBodyLayer);
         event.registerLayerDefinition(ErrorCubeModel.LAYER, ErrorCubeModel::createBodyLayer);
+        event.registerLayerDefinition(BoxModel.LAYER, BoxModel::createBodyLayer);
     }
 
     private ClientSetup() {

@@ -20,6 +20,7 @@ import net.minecraft.world.level.block.entity.BlockEntity;
  */
 public final class Loot {
     public static final String BOOK_TITLE = "the exit is white door and key";
+    public static final String SKYBOX_BOOK_TITLE = "the skybox is jail for skybox just bread for skyghost";
 
     /**
      * A written book that tells you the only useful thing anyone ever wrote down here.
@@ -34,6 +35,23 @@ public final class Loot {
         pages.add(page("the exit is white door and key"));
         pages.add(page("do not read the other pages"));
         pages.add(page("sv_cheats is not yours"));
+        tag.put("pages", pages);
+        return stack;
+    }
+
+    /**
+     * The other book. Whoever wrote it knew what the skybox is for.
+     */
+    public static ItemStack skyboxBook() {
+        ItemStack stack = new ItemStack(Items.WRITTEN_BOOK);
+        CompoundTag tag = stack.getOrCreateTag();
+        tag.putString("title", SKYBOX_BOOK_TITLE);
+        tag.putString("author", "?");
+        tag.putByte("resolved", (byte) 1);
+        ListTag pages = new ListTag();
+        pages.add(page("the skybox is jail for skybox"));
+        pages.add(page("just bread for skyghost"));
+        pages.add(page("feed it and the wall lets one shard out"));
         tag.put("pages", pages);
         return stack;
     }
@@ -74,6 +92,24 @@ public final class Loot {
                     container.setItem(1, exitBook());
                 }
             }
+            case BREAD_NOTE -> {
+                container.setItem(4, skyboxBook());
+                container.setItem(0, new ItemStack(Items.BREAD, 6 + random.nextInt(6)));
+                if (random.nextBoolean()) {
+                    container.setItem(1, new ItemStack(ModItems.SKYBOX_SHARD.get(), 1 + random.nextInt(2)));
+                }
+            }
+            case FLASHLIGHT_NUKE -> {
+                // the nuke glitch, in a chest that a broken block fell on
+                container.setItem(13, new ItemStack(ModItems.FLASHLIGHT_NUKE.get()));
+                container.setItem(4, new ItemStack(ModItems.FLASHLIGHT_NUKE.get()));
+                int debris = 2 + random.nextInt(4);
+                container.setItem(0, new ItemStack(ModItems.BROKEN_NPC_DEBRIS.get(), debris));
+                if (random.nextInt(3) == 0) {
+                    container.setItem(1, new ItemStack(ModItems.DM_CODE_FRAGMENT.get(), 1 + random.nextInt(3)));
+                }
+                container.setItem(2, new ItemStack(ModBlocks.MISSING_TEXTURE.get(), 3 + random.nextInt(4)));
+            }
             case SALVAGE -> {
                 ItemStack[] pool = {
                         new ItemStack(Items.BREAD, 1 + random.nextInt(3)),
@@ -93,7 +129,9 @@ public final class Loot {
     public enum Kind {
         VOID_CACHE,
         WHITE_DOOR_KEY,
-        SALVAGE
+        SALVAGE,
+        BREAD_NOTE,
+        FLASHLIGHT_NUKE
     }
 
     private Loot() {

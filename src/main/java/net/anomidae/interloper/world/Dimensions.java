@@ -22,6 +22,7 @@ public final class Dimensions {
     public static final ResourceKey<Level> SOURCE_VOID = key("source_void");
     public static final ResourceKey<Level> XBOX_DREAMS = key("xbox_360_dreams");
     public static final ResourceKey<Level> WHITE_DOOR = key("white_door_bsp");
+    public static final ResourceKey<Level> SKYBOX = key("skybox");
 
     /** Height of the walkable block layer in all void levels. */
     public static final int FLOOR_Y = -59;
@@ -86,7 +87,8 @@ public final class Dimensions {
     }
 
     public static boolean isVoidLevel(ServerPlayer player) {
-        return isIn(player, SOURCE_VOID) || isIn(player, XBOX_DREAMS) || isIn(player, WHITE_DOOR);
+        return isIn(player, SOURCE_VOID) || isIn(player, XBOX_DREAMS) || isIn(player, WHITE_DOOR)
+                || isIn(player, SKYBOX);
     }
 
     private Dimensions() {

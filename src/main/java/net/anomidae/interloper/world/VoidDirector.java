@@ -82,12 +82,7 @@ public final class VoidDirector {
                 spawnHunter(level, player);
             }
 
-            // exactly one Skyghost at a time, and it has a 40% chance to come back
-            if (level.getGameTime() % 400L == 0L
-                    && countNear(level, player, ModEntities.SKYGHOST.get(), 128.0D) == 0
-                    && level.getRandom().nextFloat() < 0.4F) {
-                HorrorDirector.spawnSkyghost(level, player, level.getRandom());
-            }
+            // Skyghost does not live here any more. It lives in skybox only.
 
             if (level.getRandom().nextInt(4) != 0) {
                 continue;
@@ -158,11 +153,23 @@ public final class VoidDirector {
         if (interloper == null) {
             return;
         }
-        double angle = level.getRandom().nextDouble() * Math.PI * 2.0D;
-        double distance = 34.0D + level.getRandom().nextDouble() * 16.0D;
-        double x = player.getX() + Math.cos(angle) * distance;
-        double z = player.getZ() + Math.sin(angle) * distance;
-        interloper.moveTo(x, player.getY() + 6.0D, z, level.getRandom().nextFloat() * 360.0F, 0.0F);
+        // he only starts a hunt where he can actually see the player
+        double x = 0.0D;
+        double z = 0.0D;
+        double y = 0.0D;
+        boolean placed = false;
+        for (int attempt = 0; attempt < 8 && !placed; attempt++) {
+            double angle = level.getRandom().nextDouble() * Math.PI * 2.0D;
+            double distance = 34.0D + level.getRandom().nextDouble() * 16.0D;
+            x = player.getX() + Math.cos(angle) * distance;
+            z = player.getZ() + Math.sin(angle) * distance;
+            y = player.getY() + 6.0D;
+            placed = InterloperEntity.canSee(level, new net.minecraft.world.phys.Vec3(x, y, z), player);
+        }
+        if (!placed) {
+            return;
+        }
+        interloper.moveTo(x, y, z, level.getRandom().nextFloat() * 360.0F, 0.0F);
         interloper.bindPlayer(player.getUUID());
         interloper.setTarget(player);
         interloper.setHunting(true);

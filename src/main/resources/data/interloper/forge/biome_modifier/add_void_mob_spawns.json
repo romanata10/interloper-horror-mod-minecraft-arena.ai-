@@ -33,12 +33,6 @@
       "maxCount": 1
     },
     {
-      "type": "interloper:skyghost",
-      "weight": 1,
-      "minCount": 1,
-      "maxCount": 1
-    },
-    {
       "type": "interloper:broken_character",
       "weight": 1,
       "minCount": 1,

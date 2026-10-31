@@ -1,0 +1,12 @@
+{
+  "type": "minecraft:crafting_shapeless",
+  "ingredients": [
+    {
+      "item": "interloper:skybox_fragment"
+    }
+  ],
+  "result": {
+    "item": "interloper:skybox_shard",
+    "count": 2
+  }
+}

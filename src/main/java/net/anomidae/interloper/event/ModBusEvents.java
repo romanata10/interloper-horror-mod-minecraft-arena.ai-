@@ -9,7 +9,9 @@ import net.anomidae.interloper.entity.DmNpcEntity;
 import net.anomidae.interloper.entity.InterloperCorruptEntity;
 import net.anomidae.interloper.entity.InterloperEntity;
 import net.anomidae.interloper.entity.SkyghostEntity;
+import net.anomidae.interloper.entity.VoidProbeEntity;
 import net.anomidae.interloper.entity.VradEntity;
+import net.anomidae.interloper.entity.WhiteCubeEntity;
 import net.anomidae.interloper.network.ModNetwork;
 import net.anomidae.interloper.registry.ModEntities;
 import net.minecraft.world.entity.SpawnPlacements;
@@ -38,6 +40,8 @@ public final class ModBusEvents {
         event.put(ModEntities.CONE.get(), ConeEntity.createAttributes().build());
         event.put(ModEntities.DM_NPC.get(), DmNpcEntity.createAttributes().build());
         event.put(ModEntities.BROKEN_CHARACTER.get(), BrokenCharacterEntity.createAttributes().build());
+        event.put(ModEntities.VOID_PROBE.get(), VoidProbeEntity.createAttributes().build());
+        event.put(ModEntities.WHITE_CUBE.get(), WhiteCubeEntity.createAttributes().build());
     }
 
     @SubscribeEvent

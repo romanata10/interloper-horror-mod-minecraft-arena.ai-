@@ -26,6 +26,34 @@ public class InterloperCorruptEntity extends InterloperEntity {
         return 0.42D;
     }
 
+    /**
+     * If it dies, it leaves the box it was using to look at the anomalies.
+     */
+    @Override
+    protected void dropCustomDeathLoot(net.minecraft.world.damagesource.DamageSource source, int looting,
+                                       boolean recentlyHit) {
+        super.dropCustomDeathLoot(source, looting, recentlyHit);
+        this.spawnAtLocation(new net.minecraft.world.item.ItemStack(
+                net.anomidae.interloper.registry.ModItems.SOURCE_BOX.get()));
+        this.spawnAtLocation(new net.minecraft.world.item.ItemStack(
+                net.anomidae.interloper.registry.ModItems.BROKEN_NPC_DEBRIS.get(),
+                1 + this.random.nextInt(3)));
+    }
+
+    /**
+     * The flashlight nuke is the only thing in the game that can end this one.
+     * Called by the item, because it never goes through normal damage.
+     */
+    public void breakByNuke() {
+        Hunters.forget(this);
+        this.spawnAtLocation(new net.minecraft.world.item.ItemStack(
+                net.anomidae.interloper.registry.ModItems.SOURCE_BOX.get()));
+        this.spawnAtLocation(new net.minecraft.world.item.ItemStack(
+                net.anomidae.interloper.registry.ModItems.BROKEN_NPC_DEBRIS.get(),
+                1 + this.random.nextInt(3)));
+        this.discard();
+    }
+
     @Override
     protected void onTouch(ServerPlayer player) {
         if (!player.isAlive() || player.isSpectator() || player.isCreative()) {

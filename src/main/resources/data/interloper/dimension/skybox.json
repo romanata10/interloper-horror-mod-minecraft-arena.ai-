@@ -1,0 +1,22 @@
+{
+  "type": "interloper:skybox",
+  "generator": {
+    "type": "minecraft:flat",
+    "settings": {
+      "biome": "interloper:skybox",
+      "lakes": false,
+      "features": false,
+      "layers": [
+        {
+          "block": "interloper:source_floor",
+          "height": 5
+        },
+        {
+          "block": "minecraft:water",
+          "height": 9
+        }
+      ],
+      "structure_overrides": []
+    }
+  }
+}

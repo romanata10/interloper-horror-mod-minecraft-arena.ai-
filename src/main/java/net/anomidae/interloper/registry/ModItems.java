@@ -4,7 +4,12 @@ import net.anomidae.interloper.Interloper;
 import net.anomidae.interloper.item.AnomalyScannerItem;
 import net.anomidae.interloper.item.ConsoleItem;
 import net.anomidae.interloper.item.DemoTapeItem;
+import net.anomidae.interloper.item.DmEditorItem;
+import net.anomidae.interloper.item.FlashlightNukeItem;
 import net.anomidae.interloper.item.InterloperUmbrellaItem;
+import net.anomidae.interloper.item.SkyboxExeItem;
+import net.anomidae.interloper.item.SourceBoxItem;
+import net.anomidae.interloper.item.VoidProbeItem;
 import net.anomidae.interloper.item.WhiteDoorKeyItem;
 import net.anomidae.interloper.item.SkyboxFragmentItem;
 import net.anomidae.interloper.item.UmbrellaItem;
@@ -32,6 +37,30 @@ public final class ModItems {
 
     public static final RegistryObject<Item> DEMO_TAPE = ITEMS.register("demo_tape",
             () -> new DemoTapeItem(new Item.Properties().stacksTo(16)));
+
+    public static final RegistryObject<Item> VOID_PROBE = ITEMS.register("void_probe",
+            () -> new VoidProbeItem(new Item.Properties().stacksTo(4).rarity(Rarity.UNCOMMON)));
+
+    public static final RegistryObject<Item> DM_EDITOR = ITEMS.register("dm_editor",
+            () -> new DmEditorItem(new Item.Properties().stacksTo(1).rarity(Rarity.RARE)));
+
+    public static final RegistryObject<Item> DM_CODE_FRAGMENT = ITEMS.register("dm_code_fragment",
+            () -> new Item(new Item.Properties().stacksTo(64).rarity(Rarity.UNCOMMON)));
+
+    public static final RegistryObject<Item> BROKEN_NPC_DEBRIS = ITEMS.register("broken_npc_debris",
+            () -> new Item(new Item.Properties().stacksTo(64).rarity(Rarity.UNCOMMON)));
+
+    public static final RegistryObject<Item> FLASHLIGHT_NUKE = ITEMS.register("flashlight_nuke",
+            () -> new FlashlightNukeItem(new Item.Properties().stacksTo(1).rarity(Rarity.EPIC)));
+
+    public static final RegistryObject<Item> SOURCE_BOX = ITEMS.register("source_box",
+            () -> new SourceBoxItem(new Item.Properties().stacksTo(1).rarity(Rarity.EPIC)));
+
+    public static final RegistryObject<Item> SKYBOX_SHARD = ITEMS.register("skybox_shard",
+            () -> new Item(new Item.Properties().stacksTo(64).rarity(Rarity.UNCOMMON)));
+
+    public static final RegistryObject<Item> SKYBOX_EXE = ITEMS.register("skybox_exe",
+            () -> new SkyboxExeItem(new Item.Properties().stacksTo(1).rarity(Rarity.EPIC)));
 
     public static final RegistryObject<Item> WHITE_DOOR_KEY = ITEMS.register("white_door_key",
             () -> new WhiteDoorKeyItem(new Item.Properties().stacksTo(1).rarity(Rarity.RARE)));
@@ -119,6 +148,16 @@ public final class ModItems {
                         output.accept(ModBlocks.WHITE_DOOR.get());
                         output.accept(ModBlocks.WHITE_LOCK.get());
                         output.accept(WHITE_DOOR_KEY.get());
+                        output.accept(VOID_PROBE.get());
+                        output.accept(DM_EDITOR.get());
+                        output.accept(DM_CODE_FRAGMENT.get());
+                        output.accept(BROKEN_NPC_DEBRIS.get());
+                        output.accept(FLASHLIGHT_NUKE.get());
+                        output.accept(SOURCE_BOX.get());
+                        output.accept(SKYBOX_SHARD.get());
+                        output.accept(SKYBOX_EXE.get());
+                        output.accept(ModBlocks.GRAFFITI.get());
+                        output.accept(ModBlocks.RAVENCHECK.get());
                         output.accept(INTERLOPER_UMBRELLA.get());
                     })
                     .build());

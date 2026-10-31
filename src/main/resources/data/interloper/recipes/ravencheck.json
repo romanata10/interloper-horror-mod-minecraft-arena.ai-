@@ -1,0 +1,23 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "pattern": [
+    "BBB",
+    "RGR",
+    "BBB"
+  ],
+  "key": {
+    "B": {
+      "item": "interloper:broken_npc_debris"
+    },
+    "R": {
+      "item": "minecraft:redstone"
+    },
+    "G": {
+      "item": "interloper:graffiti"
+    }
+  },
+  "result": {
+    "item": "interloper:ravencheck",
+    "count": 1
+  }
+}

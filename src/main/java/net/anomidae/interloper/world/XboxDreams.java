@@ -37,6 +37,7 @@ public final class XboxDreams {
         Dimensions.moveTo(player, Dimensions.XBOX_DREAMS, offsetX + 0.5D, FLOOR_Y, offsetZ + 0.5D,
                 player.getYRot(), true);
 
+        SkyboxWatcher.markVoid(player);
         ModNetwork.toPlayer(player, new ConsoleLinePacket("Loading xbox_360_dreams.bsp", 0xFFCFCFCF, false));
         ModNetwork.toPlayer(player, new ConsoleLinePacket("XBOX 360 DREAMS", 0xFF8CFF00, true));
         ModNetwork.toPlayer(player, new ConsoleLinePacket("achievement unlocked: you are still here", 0xFFB0FF60, false));

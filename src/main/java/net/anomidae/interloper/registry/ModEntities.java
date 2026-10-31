@@ -9,7 +9,9 @@ import net.anomidae.interloper.entity.DmNpcEntity;
 import net.anomidae.interloper.entity.InterloperCorruptEntity;
 import net.anomidae.interloper.entity.InterloperEntity;
 import net.anomidae.interloper.entity.SkyghostEntity;
+import net.anomidae.interloper.entity.VoidProbeEntity;
 import net.anomidae.interloper.entity.VradEntity;
+import net.anomidae.interloper.entity.WhiteCubeEntity;
 import net.minecraft.world.entity.EntityType;
 import net.minecraft.world.entity.MobCategory;
 import net.minecraftforge.registries.DeferredRegister;
@@ -84,6 +86,22 @@ public final class ModEntities {
                             .clientTrackingRange(12)
                             .fireImmune()
                             .build(Interloper.id("broken_character").toString()));
+
+    public static final RegistryObject<EntityType<VoidProbeEntity>> VOID_PROBE =
+            ENTITY_TYPES.register("void_probe",
+                    () -> EntityType.Builder.of(VoidProbeEntity::new, MobCategory.MISC)
+                            .sized(0.5F, 0.5F)
+                            .clientTrackingRange(16)
+                            .fireImmune()
+                            .build(Interloper.id("void_probe").toString()));
+
+    public static final RegistryObject<EntityType<WhiteCubeEntity>> WHITE_CUBE =
+            ENTITY_TYPES.register("white_cube",
+                    () -> EntityType.Builder.of(WhiteCubeEntity::new, MobCategory.MISC)
+                            .sized(0.5F, 0.5F)
+                            .clientTrackingRange(16)
+                            .fireImmune()
+                            .build(Interloper.id("white_cube").toString()));
 
     private ModEntities() {
     }

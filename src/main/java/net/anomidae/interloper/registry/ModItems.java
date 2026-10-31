@@ -115,6 +115,7 @@ public final class ModItems {
                         output.accept(ModBlocks.PORTAL_FLOOR.get());
                         output.accept(ModBlocks.MISSING_TEXTURE.get());
                         output.accept(ModBlocks.WHITE_WALL.get());
+                        output.accept(ModBlocks.FALL_HOLE.get());
                         output.accept(ModBlocks.WHITE_DOOR.get());
                         output.accept(ModBlocks.WHITE_LOCK.get());
                         output.accept(WHITE_DOOR_KEY.get());

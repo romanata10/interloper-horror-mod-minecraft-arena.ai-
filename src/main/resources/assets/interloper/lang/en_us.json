@@ -129,5 +129,6 @@
   "item.interloper.interloper_umbrella.hint": "Whatever it touches stops existing.",
   "entity.interloper.broken_character": "Broken Character",
   "item.interloper.broken_character_spawn_egg": "Broken Character Spawn Egg",
-  "death.attack.mob": "%1$s was removed from the level"
+  "death.attack.mob": "%1$s was removed from the level",
+  "block.interloper.fall_hole": "Hole In The Floor"
 }

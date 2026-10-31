@@ -335,11 +335,12 @@ public final class XboxFabricator {
         place(level, x, y + 2, z + 3, Blocks.AIR.defaultBlockState());
         place(level, x + w - 1, y + 2, z + 4, Blocks.AIR.defaultBlockState());
 
-        // the hole in the floor
+        // the hole in the floor: a 2x2 fall hole that drops you into white_door_bsp
         for (int ix = 0; ix < 2; ix++) {
             for (int iz = 0; iz < 2; iz++) {
                 place(level, x + w - 3 + ix, y - 1, z + d - 3 + iz, Blocks.AIR.defaultBlockState());
-                place(level, x + w - 3 + ix, y - 2, z + d - 3 + iz, Blocks.AIR.defaultBlockState());
+                place(level, x + w - 3 + ix, y - 2, z + d - 3 + iz,
+                        ModBlocks.FALL_HOLE.get().defaultBlockState());
             }
         }
 

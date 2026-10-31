@@ -129,5 +129,6 @@
   "item.interloper.interloper_umbrella.hint": "Всё, чего он касается, перестаёт существовать.",
   "entity.interloper.broken_character": "Сломанный персонаж",
   "item.interloper.broken_character_spawn_egg": "Яйцо призыва: сломанный персонаж",
-  "death.attack.mob": "%1$s убрали из уровня"
+  "death.attack.mob": "%1$s убрали из уровня",
+  "block.interloper.fall_hole": "Дырка в полу"
 }

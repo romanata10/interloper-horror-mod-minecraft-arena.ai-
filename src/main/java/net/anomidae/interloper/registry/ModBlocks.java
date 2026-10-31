@@ -2,6 +2,7 @@ package net.anomidae.interloper.registry;
 
 import net.anomidae.interloper.Interloper;
 import net.anomidae.interloper.block.EngineTerminalBlock;
+import net.anomidae.interloper.block.FallHoleBlock;
 import net.anomidae.interloper.block.WhiteDoorBlock;
 import net.minecraft.world.item.BlockItem;
 import net.minecraft.world.item.Item;
@@ -65,6 +66,13 @@ public final class ModBlocks {
 
     // ---------------------------------------------------------------- white door bsp
 
+    /** The hole in the floor of the gmod house. It goes to white_door_bsp. */
+    public static final RegistryObject<Block> FALL_HOLE = BLOCKS.register("fall_hole",
+            () -> new FallHoleBlock(BlockBehaviour.Properties.copy(Blocks.ICE)
+                    .strength(-1.0F, 3600000.0F)
+                    .noOcclusion()
+                    .sound(SoundType.GLASS)));
+
     public static final RegistryObject<Block> WHITE_WALL = BLOCKS.register("white_wall",
             () -> new Block(BlockBehaviour.Properties.copy(Blocks.QUARTZ_BLOCK)
                     .strength(2.0F, 6.0F).sound(SoundType.STONE)));
@@ -103,6 +111,9 @@ public final class ModBlocks {
 
     public static final RegistryObject<Item> MISSING_TEXTURE_ITEM = ModItems.ITEMS.register("missing_texture",
             () -> new BlockItem(MISSING_TEXTURE.get(), new Item.Properties()));
+
+    public static final RegistryObject<Item> FALL_HOLE_ITEM = ModItems.ITEMS.register("fall_hole",
+            () -> new BlockItem(FALL_HOLE.get(), new Item.Properties()));
 
     public static final RegistryObject<Item> WHITE_WALL_ITEM = ModItems.ITEMS.register("white_wall",
             () -> new BlockItem(WHITE_WALL.get(), new Item.Properties()));

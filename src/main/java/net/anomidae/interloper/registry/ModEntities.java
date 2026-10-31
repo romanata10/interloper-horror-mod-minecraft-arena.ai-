@@ -1,6 +1,7 @@
 package net.anomidae.interloper.registry;
 
 import net.anomidae.interloper.Interloper;
+import net.anomidae.interloper.entity.BrokenCharacterEntity;
 import net.anomidae.interloper.entity.ConeEntity;
 import net.anomidae.interloper.entity.CorruptedNpcEntity;
 import net.anomidae.interloper.entity.CrasherEntity;
@@ -75,6 +76,14 @@ public final class ModEntities {
                     .clientTrackingRange(16)
                     .fireImmune()
                     .build(Interloper.id("dmnpc").toString()));
+
+    public static final RegistryObject<EntityType<BrokenCharacterEntity>> BROKEN_CHARACTER =
+            ENTITY_TYPES.register("broken_character",
+                    () -> EntityType.Builder.of(BrokenCharacterEntity::new, MobCategory.MONSTER)
+                            .sized(0.7F, 1.9F)
+                            .clientTrackingRange(12)
+                            .fireImmune()
+                            .build(Interloper.id("broken_character").toString()));
 
     private ModEntities() {
     }

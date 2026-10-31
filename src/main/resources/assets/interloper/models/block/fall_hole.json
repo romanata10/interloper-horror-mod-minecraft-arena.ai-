@@ -1,0 +1,7 @@
+{
+  "parent": "minecraft:block/cube_all",
+  "textures": {
+    "all": "interloper:block/fall_hole"
+  },
+  "render_type": "cutout"
+}

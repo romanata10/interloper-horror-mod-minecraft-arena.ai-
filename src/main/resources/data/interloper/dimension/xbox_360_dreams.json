@@ -1,0 +1,18 @@
+{
+  "type": "interloper:xbox_360_dreams",
+  "generator": {
+    "type": "minecraft:flat",
+    "settings": {
+      "biome": "interloper:xbox_360_dreams",
+      "lakes": false,
+      "features": false,
+      "layers": [
+        {
+          "block": "interloper:source_floor",
+          "height": 5
+        }
+      ],
+      "structure_overrides": []
+    }
+  }
+}

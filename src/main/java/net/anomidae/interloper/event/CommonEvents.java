@@ -7,6 +7,9 @@ import net.anomidae.interloper.item.ConsoleCommands;
 import net.anomidae.interloper.network.ConsoleLinePacket;
 import net.anomidae.interloper.network.ModNetwork;
 import net.anomidae.interloper.registry.ModItems;
+import net.anomidae.interloper.world.DemoSequence;
+import net.anomidae.interloper.world.XboxFabricator;
+import net.minecraft.server.MinecraftServer;
 import net.anomidae.interloper.registry.ModSounds;
 import net.anomidae.interloper.util.Hunters;
 import net.anomidae.interloper.util.ServerScheduler;
@@ -25,6 +28,7 @@ import net.minecraftforge.event.RegisterCommandsEvent;
 import net.minecraftforge.event.TickEvent;
 import net.minecraftforge.event.entity.living.LivingDeathEvent;
 import net.minecraftforge.event.entity.player.PlayerEvent;
+import net.minecraftforge.event.ServerChatEvent;
 import net.minecraftforge.event.server.ServerStoppingEvent;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
 import net.minecraftforge.fml.common.Mod;
@@ -32,6 +36,7 @@ import net.minecraftforge.fml.common.Mod;
 @Mod.EventBusSubscriber(modid = Interloper.MODID, bus = Mod.EventBusSubscriber.Bus.FORGE)
 public final class CommonEvents {
     private static final String CONSOLE_FLAG = "interloper.console_given";
+    private static final String RETURN_CONSOLE = "interloper.return_console";
 
     @SubscribeEvent
     public static void registerCommands(RegisterCommandsEvent event) {
@@ -45,10 +50,32 @@ public final class CommonEvents {
         }
     }
 
+    /**
+     * Says out loud whether every dimension of this mod actually exists in the
+     * running server. It is also what the CI smoke test checks.
+     */
+    @SubscribeEvent
+    public static void onServerStarted(net.minecraftforge.event.server.ServerStartedEvent event) {
+        var server = event.getServer();
+        for (var key : java.util.List.of(net.anomidae.interloper.world.Dimensions.SOURCE_VOID,
+                net.anomidae.interloper.world.Dimensions.XBOX_DREAMS,
+                net.anomidae.interloper.world.Dimensions.WHITE_DOOR)) {
+            ServerLevel level = server.getLevel(key);
+            boolean inRegistry = server.levelKeys().contains(key);
+            Interloper.LOGGER.info("[interloper] dimension {} -> {} (registry: {})",
+                    key.location(), level != null ? "ok" : "MISSING", inRegistry);
+        }
+        Interloper.LOGGER.info("[interloper] loaded entities: {} items: {} blocks: {}",
+                net.anomidae.interloper.registry.ModEntities.ENTITY_TYPES.getEntries().size(),
+                net.anomidae.interloper.registry.ModItems.ITEMS.getEntries().size(),
+                net.anomidae.interloper.registry.ModBlocks.BLOCKS.getEntries().size());
+    }
+
     @SubscribeEvent
     public static void onServerStopping(ServerStoppingEvent event) {
         ServerScheduler.reset();
         VoidFabricator.reset();
+        XboxFabricator.reset();
     }
 
     @SubscribeEvent
@@ -58,6 +85,7 @@ public final class CommonEvents {
         }
         HorrorDirector.onLevelTick(event);
         VoidFabricator.tick(level);
+        XboxFabricator.tick(level);
         VoidDirector.tick(level);
     }
 
@@ -109,6 +137,39 @@ public final class CommonEvents {
         }
     }
 
+    /**
+     * The console is not a normal item: it comes back after death.
+     */
+    @SubscribeEvent
+    public static void onRespawn(PlayerEvent.PlayerRespawnEvent event) {
+        if (!(event.getEntity() instanceof ServerPlayer player)) {
+            return;
+        }
+        if (!player.getPersistentData().getBoolean(RETURN_CONSOLE)) {
+            return;
+        }
+        player.getPersistentData().remove(RETURN_CONSOLE);
+        ItemStack console = new ItemStack(ModItems.CONSOLE.get());
+        if (!player.getInventory().contains(console)) {
+            player.getInventory().add(console);
+        }
+        // nothing is allowed to camp the spawn point
+        Hunters.discardBoundTo(player);
+    }
+
+    /**
+     * Chat commands: the overworld Interloper can only be called by a player.
+     */
+    @SubscribeEvent
+    public static void onChat(ServerChatEvent event) {
+        ServerPlayer player = event.getPlayer();
+        String message = event.getRawText().trim().toLowerCase(java.util.Locale.ROOT);
+        if (!message.startsWith("!interloper") && !message.startsWith("!hunt")) {
+            return;
+        }
+        DemoSequence.spawnHunter(player, true);
+    }
+
     @SubscribeEvent
     public static void onClone(PlayerEvent.Clone event) {
         if (event.getEntity() instanceof ServerPlayer current && event.getOriginal() instanceof ServerPlayer previous) {
@@ -120,6 +181,10 @@ public final class CommonEvents {
     public static void onDeath(LivingDeathEvent event) {
         if (!(event.getEntity() instanceof ServerPlayer player)) {
             return;
+        }
+
+        if (player.getInventory().contains(new ItemStack(ModItems.CONSOLE.get()))) {
+            player.getPersistentData().putBoolean(RETURN_CONSOLE, true);
         }
 
         Entity killer = event.getSource().getEntity();

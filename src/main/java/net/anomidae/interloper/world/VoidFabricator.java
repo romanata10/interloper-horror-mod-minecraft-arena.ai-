@@ -2,6 +2,7 @@ package net.anomidae.interloper.world;
 
 import net.anomidae.interloper.Interloper;
 import net.anomidae.interloper.registry.ModBlocks;
+import net.anomidae.interloper.util.Loot;
 import net.minecraft.core.BlockPos;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.util.RandomSource;
@@ -34,7 +35,7 @@ public final class VoidFabricator {
     }
 
     public static void tick(ServerLevel level) {
-        if (!level.dimension().equals(SourceVoid.LEVEL)) {
+        if (!level.dimension().equals(Dimensions.SOURCE_VOID)) {
             return;
         }
         Set<Long> done = DECORATED.computeIfAbsent(level, key -> new HashSet<>());
@@ -68,6 +69,48 @@ public final class VoidFabricator {
         DECORATED.clear();
     }
 
+    /**
+     * Clears a small landing pad so a player never spawns inside a structure.
+     */
+    public static void clearPad(ServerLevel level, int x, int y, int z) {
+        for (int dx = -1; dx <= 1; dx++) {
+            for (int dz = -1; dz <= 1; dz++) {
+                for (int dy = 0; dy < 4; dy++) {
+                    level.setBlock(new BlockPos(x + dx, y + dy, z + dz), Blocks.AIR.defaultBlockState(), 2);
+                }
+            }
+        }
+    }
+
+    /**
+     * A hole in the floor that goes all the way through the void. Falling into it
+     * is the only way to reach xbox_360_dreams.
+     */
+    private static void pit(ServerLevel level, int x, int baseY, int z, BlockState floor, RandomSource random) {
+        int radius = 2 + random.nextInt(2);
+        for (int ix = -radius - 1; ix <= radius + 1; ix++) {
+            for (int iz = -radius - 1; iz <= radius + 1; iz++) {
+                double distance = Math.sqrt(ix * ix + iz * iz);
+                if (distance <= radius) {
+                    // carve the whole floor slab
+                    for (int dy = 1; dy <= 8; dy++) {
+                        place(level, x + ix, baseY - dy, z + iz, Blocks.AIR.defaultBlockState());
+                    }
+                } else if (distance <= radius + 1.2D) {
+                    place(level, x + ix, baseY, z + iz, floor);
+                    place(level, x + ix, baseY - 1, z + iz, floor);
+                }
+            }
+        }
+        // a funnel ring of missing texture so it is visible from a distance
+        for (int i = 0; i < 10; i++) {
+            double angle = i / 10.0D * Math.PI * 2.0D;
+            int px = x + (int) Math.round(Math.cos(angle) * (radius + 2));
+            int pz = z + (int) Math.round(Math.sin(angle) * (radius + 2));
+            place(level, px, baseY + 1, pz, ModBlocks.MISSING_TEXTURE.get().defaultBlockState());
+        }
+    }
+
     private static long mix(long key) {
         long value = key * 6364136223846793005L + 1442695040888963407L;
         value ^= value >>> 33;
@@ -93,7 +136,9 @@ public final class VoidFabricator {
         int originZ = chunkZ * 16 + 4 + random.nextInt(8);
 
         int roll = random.nextInt(100);
-        if (roll < 22) {
+        if (roll < 14) {
+            pit(level, originX, baseY, originZ, floor, random);
+        } else if (roll < 22) {
             arch(level, originX, baseY, originZ, floor, random);
         } else if (roll < 42) {
             geometry(level, originX, baseY, originZ, floor, random);
@@ -103,8 +148,10 @@ public final class VoidFabricator {
             skyblock(level, originX, baseY, originZ, floor, random);
         } else if (roll < 82) {
             ruins(level, originX, baseY, originZ, floor, random);
-        } else if (roll < 92) {
+        } else if (roll < 90) {
             floatingMap(level, originX, baseY, originZ, floor, random);
+        } else if (roll < 96) {
+            Loot.chest(level, new BlockPos(originX, baseY, originZ), random, Loot.Kind.VOID_CACHE);
         }
         // The rest of the chunks stay empty. That is also a structure.
     }

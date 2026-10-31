@@ -13,7 +13,10 @@ import net.anomidae.interloper.network.ModNetwork;
 import net.anomidae.interloper.registry.ModEntities;
 import net.anomidae.interloper.util.SourceText;
 import net.anomidae.interloper.world.DemoSequence;
+import net.anomidae.interloper.world.Dimensions;
 import net.anomidae.interloper.world.SourceVoid;
+import net.anomidae.interloper.world.WhiteDoor;
+import net.anomidae.interloper.world.XboxDreams;
 import net.anomidae.interloper.world.VoidDirector;
 import net.minecraft.core.BlockPos;
 import net.minecraft.server.level.ServerLevel;
@@ -62,25 +65,29 @@ public final class ConsoleCommands {
                 line(player, "  disconnect        - leave the game", 0xFF9A9A9A, false);
                 line(player, "  source_void       - go to the source void", 0xFF9A9A9A, false);
                 line(player, "  spawn <name>      - spawn an entity", 0xFF9A9A9A, false);
+                line(player, "  xbox              - go to xbox 360 dreams", 0xFF9A9A9A, false);
+                line(player, "  white_door        - go to white_door_bsp", 0xFF9A9A9A, false);
             }
-            case "sv_cheats" -> line(player, "sv_cheats is cheat protected on this server.", 0xFFFFA500, true);
+            case "sv_cheats" -> fsky(player);
             case "status" -> {
                 line(player, "hostname: source void", 0xFFFFFFFF, false);
-                line(player, "map     : " + (player.level().dimension() == SourceVoid.LEVEL ? "source_void" : "minecraft"), 0xFFFFFFFF, false);
+                line(player, "map     : " + player.level().dimension().location().getPath(), 0xFFFFFFFF, false);
                 line(player, "players : 1 human, 0 bots", 0xFFFFFFFF, false);
                 line(player, "build   : 4044 (interloper)", 0xFFFFFFFF, false);
             }
-            case "noclip", "god", "impulse", "notarget" -> line(player,
-                    "Unknown command: " + parts[0] + " (cheats are not real here)", 0xFFFFA500, true);
+            case "noclip", "god", "impulse", "notarget", "map", "connect", "developer", "mat_crosshair",
+                 "impulse_101", "ai_disable", "ent_fire", "host_timescale", "cl_showpos", "playdemo" -> fsky(player);
             case "stopdemo" -> line(player, "No demo playing.", 0xFFCFCFCF, false);
             case "disconnect", "quit", "exit" -> {
                 line(player, "Disconnecting...", 0xFFFFA500, true);
                 player.connection.disconnect(net.minecraft.network.chat.Component.literal("error:crash_by-error"));
             }
-            case "source_void", "void", "map" -> {
+            case "source_void", "void" -> {
                 line(player, "Loading source_void.bsp ...", 0xFFCFCFCF, false);
                 SourceVoid.enter(player);
             }
+            case "xbox", "xbox_360_dreams", "dreams" -> XboxDreams.enter(player);
+            case "white_door", "white_door_bsp" -> WhiteDoor.enter(player);
             case "spawn", "ent_create" -> {
                 if (parts.length < 2) {
                     line(player, "usage: spawn <corrupted_npc|vrad|crasher|cone|dmnpc|skyghost|interloper|interloper_corrupt>",
@@ -90,8 +97,9 @@ public final class ConsoleCommands {
                 spawn(player, parts[1]);
             }
             default -> {
-                line(player, "Unknown command: " + input, 0xFFFFA500, true);
-                if (player.getRandom().nextInt(4) == 0) {
+                // every Source command ends the same way on server FSKY
+                fsky(player);
+                if (player.getRandom().nextInt(3) == 0) {
                     line(player, SourceText.randomError(player.getRandom()), 0xFFFF7A00, false);
                 }
             }
@@ -107,6 +115,7 @@ public final class ConsoleCommands {
             case "cone" -> ModEntities.CONE.get();
             case "dmnpc", "enderman" -> ModEntities.DM_NPC.get();
             case "skyghost" -> ModEntities.SKYGHOST.get();
+            case "broken", "broken_character" -> ModEntities.BROKEN_CHARACTER.get();
             case "interloper" -> ModEntities.INTERLOPER.get();
             case "interloper_corrupt", "corrupt" -> ModEntities.INTERLOPER_CORRUPT.get();
             default -> null;
@@ -132,6 +141,13 @@ public final class ConsoleCommands {
             interloper.setTarget(player);
         }
         line(player, "spawned " + name, 0xFFCFCFCF, false);
+    }
+
+    /**
+     * The only answer this server ever gives to an admin command.
+     */
+    public static void fsky(ServerPlayer player) {
+        line(player, "you dont have admin comands on server FSKY", 0xFFFFA500, true);
     }
 
     public static void line(ServerPlayer player, String text, int color, boolean chat) {

@@ -1,0 +1,10 @@
+{
+  "variants": {
+    "open=false": {
+      "model": "interloper:block/white_lock"
+    },
+    "open=true": {
+      "model": "interloper:block/white_lock"
+    }
+  }
+}

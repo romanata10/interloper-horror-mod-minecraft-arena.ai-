@@ -100,18 +100,13 @@ public final class HorrorDirector {
         } else if (roll < 88) {
             ModNetwork.toPlayer(player, new ScreenEffectPacket(ScreenEffectPacket.Effect.SHAKE, 50, 0.5F));
             playNearby(level, player, ModSounds.STINGER.get(), 0.8F, 0.9F);
-        } else if (roll < 95) {
+        } else if (roll < 97) {
             if (InterloperConfig.NATURAL_SKYGHOST.get()) {
                 spawnSkyghost(level, player, random);
             }
-        } else {
-            if (InterloperConfig.NATURAL_INTERLOPER.get()
-                    && level.isNight()
-                    && !Hunters.isOnCrashCooldown(player)
-                    && random.nextInt(Math.max(1, InterloperConfig.INTERLOPER_SPAWN_CHANCE.get())) == 0) {
-                startHunt(level, player, random);
-            }
         }
+        // The Interloper never spawns on his own in the overworld any more.
+        // He only comes when somebody asks for him: the console, or a chat command.
     }
 
     private static void playNearby(ServerLevel level, Player player, SoundEvent sound, float volume, float pitch) {

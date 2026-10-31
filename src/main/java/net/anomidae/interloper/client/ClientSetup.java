@@ -8,6 +8,7 @@ import net.anomidae.interloper.client.model.ErrorCubeModel;
 import net.anomidae.interloper.client.model.InterloperModel;
 import net.anomidae.interloper.client.model.SkyghostModel;
 import net.anomidae.interloper.client.model.TposeModel;
+import net.anomidae.interloper.client.render.BrokenCharacterRenderer;
 import net.anomidae.interloper.client.render.ConeRenderer;
 import net.anomidae.interloper.client.render.CorruptedNpcRenderer;
 import net.anomidae.interloper.client.render.CrasherRenderer;
@@ -34,6 +35,7 @@ public final class ClientSetup {
         event.registerEntityRenderer(ModEntities.CRASHER.get(), CrasherRenderer::new);
         event.registerEntityRenderer(ModEntities.CONE.get(), ConeRenderer::new);
         event.registerEntityRenderer(ModEntities.DM_NPC.get(), DmNpcRenderer::new);
+        event.registerEntityRenderer(ModEntities.BROKEN_CHARACTER.get(), BrokenCharacterRenderer::new);
     }
 
     @SubscribeEvent

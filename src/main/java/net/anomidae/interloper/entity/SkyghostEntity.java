@@ -143,13 +143,18 @@ public class SkyghostEntity extends SourceEntity {
                 SoundSource.HOSTILE, 0.6F, 1.6F);
     }
 
+    /**
+     * Unlike the rest of the void, this one can actually be killed - and it leaves
+     * the Interloper's umbrella behind when it dies.
+     */
     @Override
-    public boolean hurt(net.minecraft.world.damagesource.DamageSource source, float amount) {
-        if (source.getEntity() instanceof ServerPlayer player && this.isBoundTo(player.getUUID())) {
-            this.abandonHunt();
-            return false;
-        }
-        return super.hurt(source, amount);
+    protected void dropCustomDeathLoot(net.minecraft.world.damagesource.DamageSource source, int looting,
+                                       boolean recentlyHit) {
+        super.dropCustomDeathLoot(source, looting, recentlyHit);
+        this.spawnAtLocation(new net.minecraft.world.item.ItemStack(
+                net.anomidae.interloper.registry.ModItems.INTERLOPER_UMBRELLA.get()));
+        this.spawnAtLocation(new net.minecraft.world.item.ItemStack(
+                net.anomidae.interloper.registry.ModItems.SKYBOX_FRAGMENT.get(), 1 + this.random.nextInt(3)));
     }
 
     @Override

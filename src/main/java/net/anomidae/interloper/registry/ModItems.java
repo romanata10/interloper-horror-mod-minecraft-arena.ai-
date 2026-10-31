@@ -4,6 +4,8 @@ import net.anomidae.interloper.Interloper;
 import net.anomidae.interloper.item.AnomalyScannerItem;
 import net.anomidae.interloper.item.ConsoleItem;
 import net.anomidae.interloper.item.DemoTapeItem;
+import net.anomidae.interloper.item.InterloperUmbrellaItem;
+import net.anomidae.interloper.item.WhiteDoorKeyItem;
 import net.anomidae.interloper.item.SkyboxFragmentItem;
 import net.anomidae.interloper.item.UmbrellaItem;
 import net.anomidae.interloper.util.DemoType;
@@ -30,6 +32,12 @@ public final class ModItems {
 
     public static final RegistryObject<Item> DEMO_TAPE = ITEMS.register("demo_tape",
             () -> new DemoTapeItem(new Item.Properties().stacksTo(16)));
+
+    public static final RegistryObject<Item> WHITE_DOOR_KEY = ITEMS.register("white_door_key",
+            () -> new WhiteDoorKeyItem(new Item.Properties().stacksTo(1).rarity(Rarity.RARE)));
+
+    public static final RegistryObject<Item> INTERLOPER_UMBRELLA = ITEMS.register("interloper_umbrella",
+            () -> new InterloperUmbrellaItem(new Item.Properties().stacksTo(1).rarity(Rarity.EPIC)));
 
     public static final RegistryObject<Item> SKYBOX_FRAGMENT = ITEMS.register("skybox_fragment",
             () -> new SkyboxFragmentItem(new Item.Properties().stacksTo(64).rarity(Rarity.UNCOMMON)));
@@ -68,6 +76,10 @@ public final class ModItems {
             () -> new ForgeSpawnEggItem(ModEntities.CONE, 0x808080, 0x4A4A4A,
                     new Item.Properties()));
 
+    public static final RegistryObject<Item> BROKEN_CHARACTER_SPAWN_EGG = ITEMS.register("broken_character_spawn_egg",
+            () -> new ForgeSpawnEggItem(ModEntities.BROKEN_CHARACTER, 0x9A9A9A, 0x2A2A2A,
+                    new Item.Properties().rarity(Rarity.UNCOMMON)));
+
     public static final RegistryObject<Item> DMNPC_SPAWN_EGG = ITEMS.register("dmnpc_spawn_egg",
             () -> new ForgeSpawnEggItem(ModEntities.DM_NPC, 0x0A0A12, 0x9A4AFF,
                     new Item.Properties().rarity(Rarity.UNCOMMON)));
@@ -94,6 +106,20 @@ public final class ModItems {
                         output.accept(CRASHER_SPAWN_EGG.get());
                         output.accept(CONE_SPAWN_EGG.get());
                         output.accept(DMNPC_SPAWN_EGG.get());
+                        output.accept(BROKEN_CHARACTER_SPAWN_EGG.get());
+                        output.accept(ModBlocks.XBOX_GRASS.get());
+                        output.accept(ModBlocks.XBOX_DIRT.get());
+                        output.accept(ModBlocks.XBOX_PANEL.get());
+                        output.accept(ModBlocks.XBOX_GLOW.get());
+                        output.accept(ModBlocks.PORTAL_PANEL.get());
+                        output.accept(ModBlocks.PORTAL_FLOOR.get());
+                        output.accept(ModBlocks.MISSING_TEXTURE.get());
+                        output.accept(ModBlocks.WHITE_WALL.get());
+                        output.accept(ModBlocks.FALL_HOLE.get());
+                        output.accept(ModBlocks.WHITE_DOOR.get());
+                        output.accept(ModBlocks.WHITE_LOCK.get());
+                        output.accept(WHITE_DOOR_KEY.get());
+                        output.accept(INTERLOPER_UMBRELLA.get());
                     })
                     .build());
 

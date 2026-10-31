@@ -1,6 +1,7 @@
 package net.anomidae.interloper.event;
 
 import net.anomidae.interloper.Interloper;
+import net.anomidae.interloper.entity.BrokenCharacterEntity;
 import net.anomidae.interloper.entity.ConeEntity;
 import net.anomidae.interloper.entity.CorruptedNpcEntity;
 import net.anomidae.interloper.entity.CrasherEntity;
@@ -36,6 +37,7 @@ public final class ModBusEvents {
         event.put(ModEntities.CRASHER.get(), CrasherEntity.createAttributes().build());
         event.put(ModEntities.CONE.get(), ConeEntity.createAttributes().build());
         event.put(ModEntities.DM_NPC.get(), DmNpcEntity.createAttributes().build());
+        event.put(ModEntities.BROKEN_CHARACTER.get(), BrokenCharacterEntity.createAttributes().build());
     }
 
     @SubscribeEvent
@@ -50,6 +52,29 @@ public final class ModBusEvents {
                 SpawnPlacements.Type.NO_RESTRICTIONS,
                 Heightmap.Types.MOTION_BLOCKING_NO_LEAVES,
                 SkyghostEntity::checkSpawnRules,
+                SpawnPlacementRegisterEvent.Operation.REPLACE);
+
+        // The rest of the void walks the overworld too, just very rarely and in the dark.
+        registerVoidMob(event, ModEntities.CORRUPTED_NPC.get());
+        registerVoidMob(event, ModEntities.VRAD.get());
+        registerVoidMob(event, ModEntities.CRASHER.get());
+        registerVoidMob(event, ModEntities.CONE.get());
+        registerVoidMob(event, ModEntities.DM_NPC.get());
+        registerVoidMob(event, ModEntities.BROKEN_CHARACTER.get());
+    }
+
+    /**
+     * Void mobs may exist at any light level, day or night, but never from a spawn egg.
+     */
+    private static <T extends net.minecraft.world.entity.Entity> void registerVoidMob(
+            SpawnPlacementRegisterEvent event,
+            net.minecraft.world.entity.EntityType<T> type) {
+        event.register(type,
+                SpawnPlacements.Type.NO_RESTRICTIONS,
+                Heightmap.Types.MOTION_BLOCKING_NO_LEAVES,
+                (entityType, level, reason, pos, random) ->
+                        reason != net.minecraft.world.entity.MobSpawnType.SPAWN_EGG
+                                && level.getBlockState(pos.below()).isSolidRender(level, pos.below()),
                 SpawnPlacementRegisterEvent.Operation.REPLACE);
     }
 

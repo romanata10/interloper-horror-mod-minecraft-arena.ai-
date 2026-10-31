@@ -3,7 +3,6 @@ package net.anomidae.interloper.client.model;
 import com.mojang.blaze3d.vertex.PoseStack;
 import com.mojang.blaze3d.vertex.VertexConsumer;
 import net.anomidae.interloper.Interloper;
-import net.anomidae.interloper.entity.CorruptedNpcEntity;
 import net.minecraft.client.model.EntityModel;
 import net.minecraft.client.model.geom.ModelLayerLocation;
 import net.minecraft.client.model.geom.ModelPart;
@@ -16,7 +15,7 @@ import net.minecraft.client.model.geom.builders.PartDefinition;
 /**
  * A zombie stuck in a T-pose that nobody ever exported from the model viewer.
  */
-public class TposeModel extends EntityModel<CorruptedNpcEntity> {
+public class TposeModel<T extends net.minecraft.world.entity.LivingEntity> extends EntityModel<T> {
     public static final ModelLayerLocation LAYER = new ModelLayerLocation(Interloper.id("corrupted_npc"), "main");
 
     private final ModelPart root;
@@ -52,7 +51,7 @@ public class TposeModel extends EntityModel<CorruptedNpcEntity> {
     }
 
     @Override
-    public void setupAnim(CorruptedNpcEntity entity, float limbSwing, float limbSwingAmount,
+    public void setupAnim(T entity, float limbSwing, float limbSwingAmount,
                           float ageInTicks, float netHeadYaw, float headPitch) {
         // No animation. The rig was never attached.
     }

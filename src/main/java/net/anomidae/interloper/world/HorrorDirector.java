@@ -118,6 +118,10 @@ public final class HorrorDirector {
     }
 
     public static void spawnSkyghost(ServerLevel level, Player player, RandomSource random) {
+        // There is exactly one place a Skyghost can be, and it is not here.
+        if (!level.dimension().equals(Dimensions.SKYBOX)) {
+            return;
+        }
         SkyghostEntity ghost = ModEntities.SKYGHOST.get().create(level);
         if (ghost == null) {
             return;

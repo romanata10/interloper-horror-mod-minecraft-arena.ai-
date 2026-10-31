@@ -121,11 +121,48 @@ public final class XboxFabricator {
             dashboardBlade(level, originX, FLOOR, originZ, random);
         } else if (roll < 88) {
             Loot.chest(level, new BlockPos(originX, FLOOR, originZ), random, Loot.Kind.SALVAGE);
+        } else if (roll > 98) {
+            // rare: the flashlight nuke glitch, inside a chest that the map dropped
+            nukeGlitch(level, originX, FLOOR, originZ, random);
         }
         // everything else is grass and the green gradient of an old dashboard
     }
 
     // ------------------------------------------------------------------ structures
+
+    /**
+     * Flashlight Nuke Glitch. A chest covered in the blocks the engine uses when a
+     * model fails to load, and inside it the one item that kills the Interloper.
+     */
+    private static void nukeGlitch(ServerLevel level, int x, int y, int z, RandomSource random) {
+        BlockState broken = ModBlocks.MISSING_TEXTURE.get().defaultBlockState();
+        for (int ix = -2; ix <= 2; ix++) {
+            for (int iz = -2; iz <= 2; iz++) {
+                place(level, x + ix, y - 1, z + iz, ModBlocks.XBOX_DIRT.get().defaultBlockState());
+            }
+        }
+        Loot.chest(level, new BlockPos(x, y, z), random, Loot.Kind.FLASHLIGHT_NUKE);
+        // the cover: a broken block sitting on the chest, plus floating shards of it
+        place(level, x, y + 1, z, broken);
+        for (int i = 0; i < 7; i++) {
+            int bx = x + random.nextInt(7) - 3;
+            int bz = z + random.nextInt(7) - 3;
+            if (bx == x && bz == z) {
+                continue;
+            }
+            place(level, bx, y, bz, broken);
+        }
+        for (int i = 0; i < 4; i++) {
+            int bx = x + random.nextInt(9) - 4;
+            int bz = z + random.nextInt(9) - 4;
+            place(level, bx, y + 1 + random.nextInt(3), bz, broken);
+        }
+        // the flashlight that points at it
+        for (int h = 1; h <= 4; h++) {
+            place(level, x + 3, y + h, z + 3, broken);
+        }
+        place(level, x + 3, y + 5, z + 3, ModBlocks.XBOX_GLOW.get().defaultBlockState());
+    }
 
     private static void gmConstruct(ServerLevel level, int x, int y, int z, RandomSource random) {
         BlockState floor = ModBlocks.PORTAL_FLOOR.get().defaultBlockState();

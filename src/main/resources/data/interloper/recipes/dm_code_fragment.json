@@ -1,0 +1,18 @@
+{
+  "type": "minecraft:crafting_shapeless",
+  "ingredients": [
+    {
+      "item": "interloper:broken_npc_debris"
+    },
+    {
+      "item": "interloper:broken_npc_debris"
+    },
+    {
+      "item": "minecraft:redstone"
+    }
+  ],
+  "result": {
+    "item": "interloper:dm_code_fragment",
+    "count": 1
+  }
+}

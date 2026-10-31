@@ -1,0 +1,22 @@
+{
+  "display": {
+    "icon": {
+      "item": "interloper:skybox_exe"
+    },
+    "title": {
+      "text": "skybox_active"
+    },
+    "description": {
+      "text": "You got out of the Source Void."
+    },
+    "frame": "challenge",
+    "show_toast": true,
+    "announce_to_chat": true,
+    "hidden": false
+  },
+  "criteria": {
+    "impossible": {
+      "trigger": "minecraft:impossible"
+    }
+  }
+}

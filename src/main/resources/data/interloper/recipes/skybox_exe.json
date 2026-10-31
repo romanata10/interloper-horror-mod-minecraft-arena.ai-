@@ -1,0 +1,23 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "pattern": [
+    "SDS",
+    "SES",
+    "SSS"
+  ],
+  "key": {
+    "S": {
+      "item": "interloper:skybox_shard"
+    },
+    "D": {
+      "item": "minecraft:diamond"
+    },
+    "E": {
+      "item": "minecraft:ender_eye"
+    }
+  },
+  "result": {
+    "item": "interloper:skybox_exe",
+    "count": 1
+  }
+}

@@ -88,17 +88,29 @@ public final class VoidFabricator {
      */
     private static void pit(ServerLevel level, int x, int baseY, int z, BlockState floor, RandomSource random) {
         int radius = 2 + random.nextInt(2);
+        // The bottom layer of the map is one block above minBuildHeight, so the
+        // hole has to be carved all the way down to it or the player lands on
+        // that last block and never reaches xbox_360_dreams.
+        int bottom = level.getMinBuildHeight();
         for (int ix = -radius - 1; ix <= radius + 1; ix++) {
             for (int iz = -radius - 1; iz <= radius + 1; iz++) {
                 double distance = Math.sqrt(ix * ix + iz * iz);
                 if (distance <= radius) {
-                    // carve the whole floor slab
-                    for (int dy = 1; dy <= 8; dy++) {
-                        place(level, x + ix, baseY - dy, z + iz, Blocks.AIR.defaultBlockState());
+                    for (int y = baseY + 1; y >= bottom; y--) {
+                        place(level, x + ix, y, z + iz, Blocks.AIR.defaultBlockState());
                     }
                 } else if (distance <= radius + 1.2D) {
                     place(level, x + ix, baseY, z + iz, floor);
                     place(level, x + ix, baseY - 1, z + iz, floor);
+                }
+            }
+        }
+        // the shaft continues as a column of nothing above the hole, so falling in
+        // can not be stopped by a stray block of scenery
+        for (int ix = -radius; ix <= radius; ix++) {
+            for (int iz = -radius; iz <= radius; iz++) {
+                for (int y = baseY + 2; y <= baseY + 6; y++) {
+                    place(level, x + ix, y, z + iz, Blocks.AIR.defaultBlockState());
                 }
             }
         }
@@ -119,7 +131,7 @@ public final class VoidFabricator {
     }
 
     private static void place(ServerLevel level, int x, int y, int z, BlockState state) {
-        if (y < level.getMinBuildHeight() + 1 || y > level.getMaxBuildHeight() - 1) {
+        if (y < level.getMinBuildHeight() || y > level.getMaxBuildHeight() - 1) {
             return;
         }
         BlockPos pos = new BlockPos(x, y, z);

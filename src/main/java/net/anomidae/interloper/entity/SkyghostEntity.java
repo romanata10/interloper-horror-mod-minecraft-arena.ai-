@@ -8,9 +8,16 @@ import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.sounds.SoundEvents;
 import net.minecraft.sounds.SoundSource;
 import net.minecraft.util.RandomSource;
+import net.anomidae.interloper.registry.ModItems;
+import net.anomidae.interloper.world.Dimensions;
+import net.minecraft.world.InteractionHand;
+import net.minecraft.world.InteractionResult;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.EntityType;
 import net.minecraft.world.entity.Mob;
+import net.minecraft.world.entity.player.Player;
+import net.minecraft.world.item.ItemStack;
+import net.minecraft.world.item.Items;
 import net.minecraft.world.entity.MobSpawnType;
 import net.minecraft.world.entity.ai.attributes.AttributeSupplier;
 import net.minecraft.world.entity.ai.attributes.Attributes;
@@ -56,11 +63,13 @@ public class SkyghostEntity extends SourceEntity {
             this.clearFire();
         }
 
-        this.lifeTicks++;
-        if (this.lifeTicks > 20 * 120) {
+        // it does not exist outside of skybox any more
+        if (!this.level().dimension().equals(Dimensions.SKYBOX)) {
             this.abandonHunt();
             return;
         }
+
+        this.lifeTicks++;
 
         ServerPlayer player = this.resolveTarget(64.0D);
         if (player == null) {
@@ -141,6 +150,36 @@ public class SkyghostEntity extends SourceEntity {
         level.addFreshEntity(mob);
         level.playSound(null, new BlockPos((int) x, (int) y, (int) z), ModSounds.STINGER.get(),
                 SoundSource.HOSTILE, 0.6F, 1.6F);
+    }
+
+    /**
+     * Bread. It is the only thing it has ever wanted, and it pays in skybox shards.
+     */
+    @Override
+    public InteractionResult mobInteract(Player player, InteractionHand hand) {
+        ItemStack stack = player.getItemInHand(hand);
+        if (!stack.is(Items.BREAD)) {
+            return super.mobInteract(player, hand);
+        }
+        if (this.level().isClientSide) {
+            return InteractionResult.SUCCESS;
+        }
+        if (!player.isCreative()) {
+            stack.shrink(1);
+        }
+        int shards = 1 + this.random.nextInt(3);
+        this.spawnAtLocation(new ItemStack(ModItems.SKYBOX_SHARD.get(), shards));
+        this.level().playSound(null, this.blockPosition(), SoundEvents.GENERIC_EAT,
+                SoundSource.NEUTRAL, 0.8F, 1.4F);
+        this.level().playSound(null, this.blockPosition(), SoundEvents.EXPERIENCE_ORB_PICKUP,
+                SoundSource.NEUTRAL, 0.8F, 2.0F);
+        if (player instanceof ServerPlayer serverPlayer) {
+            serverPlayer.sendSystemMessage(net.minecraft.network.chat.Component
+                    .literal("it took the bread and left " + shards + " shard"
+                            + (shards == 1 ? "" : "s"))
+                    .withStyle(net.minecraft.ChatFormatting.GRAY));
+        }
+        return InteractionResult.CONSUME;
     }
 
     /**

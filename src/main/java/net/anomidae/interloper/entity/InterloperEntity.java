@@ -1,6 +1,8 @@
 package net.anomidae.interloper.entity;
 
+import net.anomidae.interloper.network.ConsoleLinePacket;
 import net.anomidae.interloper.network.ModNetwork;
+import net.anomidae.interloper.util.Bindings;
 import net.anomidae.interloper.network.ScreenEffectPacket;
 import net.anomidae.interloper.registry.ModItems;
 import net.anomidae.interloper.registry.ModSounds;
@@ -9,6 +11,7 @@ import net.anomidae.interloper.util.ServerScheduler;
 import net.anomidae.interloper.world.Dimensions;
 import net.anomidae.interloper.world.SourceVoid;
 import net.minecraft.nbt.CompoundTag;
+import net.minecraft.ChatFormatting;
 import net.minecraft.network.chat.Component;
 import net.minecraft.network.syncher.EntityDataAccessor;
 import net.minecraft.network.syncher.EntityDataSerializers;
@@ -42,8 +45,11 @@ public class InterloperEntity extends SourceEntity {
     private static final EntityDataAccessor<Integer> DATA_STARE =
             SynchedEntityData.defineId(InterloperEntity.class, EntityDataSerializers.INT);
 
-    /** He gives up after three minutes even if he never reaches you. */
-    private static final int MAX_LIFE_TICKS = 20 * 180;
+    /**
+     * One chase is one minute. If he has not reached you by then he despawns, and
+     * he only comes back if he sees you again.
+     */
+    public static final int MAX_LIFE_TICKS = 20 * 60;
 
     private int lifeTicks;
     private int soundCooldown;
@@ -98,6 +104,7 @@ public class InterloperEntity extends SourceEntity {
             this.soundCooldown--;
         }
         if (this.lifeTicks > MAX_LIFE_TICKS) {
+            tellGone();
             this.abandonHunt();
             return;
         }
@@ -199,6 +206,17 @@ public class InterloperEntity extends SourceEntity {
         });
     }
 
+    /**
+     * He does not vanish quietly, but he does not hurt anybody on the way out.
+     */
+    private void tellGone() {
+        ServerPlayer player = Bindings.online(this, this.boundPlayerId());
+        if (player != null) {
+            player.sendSystemMessage(Component.literal("it lost interest").withStyle(ChatFormatting.DARK_GRAY));
+            ModNetwork.toPlayer(player, new ConsoleLinePacket("ent_remove interloper", 0xFF8A8A8A, false));
+        }
+    }
+
     protected void finish() {
         this.finished = true;
         this.setHunting(false);
@@ -248,6 +266,17 @@ public class InterloperEntity extends SourceEntity {
         this.setHunting(tag.getBoolean("Hunting"));
         this.lifeTicks = tag.getInt("Life");
         this.finished = tag.getBoolean("Finished");
+    }
+
+    /**
+     * He only exists where he can see you. Used by every spawn site, so a hunt
+     * never starts through a wall or on the other side of a closed door.
+     */
+    public static boolean canSee(net.minecraft.server.level.ServerLevel level, Vec3 from, ServerPlayer player) {
+        var hit = level.clip(new net.minecraft.world.level.ClipContext(from, player.getEyePosition(),
+                net.minecraft.world.level.ClipContext.Block.COLLIDER,
+                net.minecraft.world.level.ClipContext.Fluid.NONE, player));
+        return hit.getType() == net.minecraft.world.phys.HitResult.Type.MISS;
     }
 
     public static boolean checkSpawnRules(EntityType<InterloperEntity> type,

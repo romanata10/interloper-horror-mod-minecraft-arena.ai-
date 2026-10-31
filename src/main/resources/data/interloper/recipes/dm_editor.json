@@ -1,0 +1,23 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "pattern": [
+    "F F",
+    "FCF",
+    " R "
+  ],
+  "key": {
+    "F": {
+      "item": "interloper:dm_code_fragment"
+    },
+    "C": {
+      "item": "minecraft:compass"
+    },
+    "R": {
+      "item": "minecraft:redstone_block"
+    }
+  },
+  "result": {
+    "item": "interloper:dm_editor",
+    "count": 1
+  }
+}

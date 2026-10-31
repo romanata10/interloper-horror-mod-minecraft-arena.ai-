@@ -14,7 +14,10 @@ import net.anomidae.interloper.registry.ModSounds;
 import net.anomidae.interloper.util.Hunters;
 import net.anomidae.interloper.util.ServerScheduler;
 import net.anomidae.interloper.util.TargetBound;
+import net.anomidae.interloper.world.Graffiti;
 import net.anomidae.interloper.world.HorrorDirector;
+import net.anomidae.interloper.world.SkyboxWatcher;
+import net.anomidae.interloper.world.UnderBedrock;
 import net.anomidae.interloper.world.VoidDirector;
 import net.anomidae.interloper.world.VoidFabricator;
 import net.minecraft.ChatFormatting;
@@ -59,7 +62,8 @@ public final class CommonEvents {
         var server = event.getServer();
         for (var key : java.util.List.of(net.anomidae.interloper.world.Dimensions.SOURCE_VOID,
                 net.anomidae.interloper.world.Dimensions.XBOX_DREAMS,
-                net.anomidae.interloper.world.Dimensions.WHITE_DOOR)) {
+                net.anomidae.interloper.world.Dimensions.WHITE_DOOR,
+                net.anomidae.interloper.world.Dimensions.SKYBOX)) {
             ServerLevel level = server.getLevel(key);
             boolean inRegistry = server.levelKeys().contains(key);
             Interloper.LOGGER.info("[interloper] dimension {} -> {} (registry: {})",
@@ -76,6 +80,9 @@ public final class CommonEvents {
         ServerScheduler.reset();
         VoidFabricator.reset();
         XboxFabricator.reset();
+        UnderBedrock.reset();
+        net.anomidae.interloper.world.SkyboxDimension.reset();
+        Graffiti.reset();
     }
 
     @SubscribeEvent
@@ -87,6 +94,14 @@ public final class CommonEvents {
         VoidFabricator.tick(level);
         XboxFabricator.tick(level);
         VoidDirector.tick(level);
+        UnderBedrock.tick(level);
+        Graffiti.tickDay(level);
+        Graffiti.tickInterlopers(level);
+        if (level.getGameTime() % 20L == 0L) {
+            for (ServerPlayer player : level.players()) {
+                SkyboxWatcher.tick(player);
+            }
+        }
     }
 
     @SubscribeEvent
@@ -117,6 +132,10 @@ public final class CommonEvents {
                     .withStyle(ChatFormatting.DARK_GRAY));
         }
 
+        // the street only exists after somebody has been in the world
+        Graffiti.ensureStreet(player);
+        SkyboxWatcher.onLogin(player);
+
         if (!InterloperConfig.INTRO_MESSAGE.get()) {
             return;
         }
@@ -145,6 +164,7 @@ public final class CommonEvents {
         if (!(event.getEntity() instanceof ServerPlayer player)) {
             return;
         }
+        net.anomidae.interloper.world.SkyboxWatcher.onRespawn(player);
         if (!player.getPersistentData().getBoolean(RETURN_CONSOLE)) {
             return;
         }
@@ -205,6 +225,50 @@ public final class CommonEvents {
                     SoundSource.HOSTILE, 1.0F, 0.6F);
             player.sendSystemMessage(Component.literal("error: entity killed the player without a valid trace")
                     .withStyle(ChatFormatting.DARK_RED));
+        }
+    }
+
+    /**
+     * Bedrock is breakable in this world. That is the point: the bottom of the map
+     * is not a wall, it is a door with a coin flip behind it.
+     */
+    @SubscribeEvent
+    public static void onBlockBreak(net.minecraftforge.event.level.BlockEvent.BreakEvent event) {
+        if (!UnderBedrock.isBedrock(event.getState())) {
+            return;
+        }
+        if (event.getPlayer() instanceof ServerPlayer player && player.isCreative()) {
+            return;
+        }
+        if (event.getPlayer() instanceof ServerPlayer player
+                && !player.getMainHandItem().isCorrectToolForDrops(event.getState())) {
+            // still breakable, just slowly: you need a pickaxe to open the floor
+            event.setCanceled(true);
+            player.displayClientMessage(Component.literal("the floor needs a pickaxe")
+                    .withStyle(ChatFormatting.DARK_GRAY), true);
+            return;
+        }
+        if (event.getLevel() instanceof ServerLevel level) {
+            UnderBedrock.noteBroken(level, event.getPos());
+        }
+    }
+
+    /**
+     * Nobody dies of a fall they were not supposed to take.
+     */
+    @SubscribeEvent
+    public static void onLivingHurt(net.minecraftforge.event.entity.living.LivingHurtEvent event) {
+        if (!(event.getEntity() instanceof ServerPlayer player)) {
+            return;
+        }
+        if (!UnderBedrock.holdsDamage(player)) {
+            return;
+        }
+        var source = event.getSource();
+        if (source.is(net.minecraft.tags.DamageTypeTags.IS_FALL)
+                || source.is(net.minecraft.tags.DamageTypeTags.BYPASSES_ARMOR)
+                || source.is(net.minecraft.tags.DamageTypeTags.IS_EXPLOSION)) {
+            event.setAmount(0.0F);
         }
     }
 

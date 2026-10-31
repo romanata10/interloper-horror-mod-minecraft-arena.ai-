@@ -3,6 +3,8 @@ package net.anomidae.interloper.registry;
 import net.anomidae.interloper.Interloper;
 import net.anomidae.interloper.block.EngineTerminalBlock;
 import net.anomidae.interloper.block.FallHoleBlock;
+import net.anomidae.interloper.block.GraffitiBlock;
+import net.anomidae.interloper.block.RavenCheckBlock;
 import net.anomidae.interloper.block.WhiteDoorBlock;
 import net.minecraft.world.item.BlockItem;
 import net.minecraft.world.item.Item;
@@ -64,6 +66,16 @@ public final class ModBlocks {
             () -> new Block(BlockBehaviour.Properties.copy(Blocks.GLASS)
                     .strength(0.4F).lightLevel(state -> 7).sound(SoundType.GLASS)));
 
+    /** The man with the umbrella, painted on a wall. */
+    public static final RegistryObject<Block> GRAFFITI = BLOCKS.register("graffiti",
+            () -> new GraffitiBlock(BlockBehaviour.Properties.copy(Blocks.STONE)
+                    .strength(1.0F).noOcclusion().lightLevel(state -> 3)));
+
+    /** RAVENCHECK.EXE - watches the wall and reports to chat. */
+    public static final RegistryObject<Block> RAVENCHECK = BLOCKS.register("ravencheck",
+            () -> new RavenCheckBlock(BlockBehaviour.Properties.copy(Blocks.IRON_BLOCK)
+                    .strength(3.0F, 12.0F).lightLevel(state -> 6).sound(SoundType.METAL)));
+
     // ---------------------------------------------------------------- white door bsp
 
     /** The hole in the floor of the gmod house. It goes to white_door_bsp. */
@@ -111,6 +123,12 @@ public final class ModBlocks {
 
     public static final RegistryObject<Item> MISSING_TEXTURE_ITEM = ModItems.ITEMS.register("missing_texture",
             () -> new BlockItem(MISSING_TEXTURE.get(), new Item.Properties()));
+
+    public static final RegistryObject<Item> GRAFFITI_ITEM = ModItems.ITEMS.register("graffiti",
+            () -> new BlockItem(GRAFFITI.get(), new Item.Properties()));
+
+    public static final RegistryObject<Item> RAVENCHECK_ITEM = ModItems.ITEMS.register("ravencheck",
+            () -> new BlockItem(RAVENCHECK.get(), new Item.Properties()));
 
     public static final RegistryObject<Item> FALL_HOLE_ITEM = ModItems.ITEMS.register("fall_hole",
             () -> new BlockItem(FALL_HOLE.get(), new Item.Properties()));

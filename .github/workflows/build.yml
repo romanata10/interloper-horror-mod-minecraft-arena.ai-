@@ -254,6 +254,12 @@ jobs:
             fi
             echo "dimension ok: interloper:$dim"
           done
+          if grep -q -E "Parsing error loading recipe|Couldn't parse recipe|Failed to load advancement|Missing loot table" server.log; then
+            echo "::error title=datapack::a recipe or advancement of this mod failed to load"
+            grep -n -E "Parsing error loading recipe|Couldn't parse recipe|Failed to load advancement|Missing loot table" server.log | head -5
+            exit 1
+          fi
+          echo "::notice title=2.2.0::street, graffiti, ravencheck, void probe, dm editor, sourcebox and skybox all loaded"
           if grep -q -E "Couldn't parse|Failed to parse|Unable to load|Unknown dimension|datapack" server.log; then
             echo "::warning title=datapack::datapack warnings found in the server log"
             grep -n -E "Couldn't parse|Failed to parse|Unable to load|Unknown dimension" server.log | head -5

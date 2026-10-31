@@ -152,5 +152,6 @@
   "advancements.interloper.skybox_active.title": "skybox_active",
   "advancements.interloper.skybox_active.description": "You got out of the Source Void.",
   "message.interloper.skybox_locked": "skybox.exe: not restored yet",
-  "message.interloper.cube_error": "Cube:error"
+  "message.interloper.cube_error": "Cube:error",
+  "item.interloper.source_box.hint2": "Cube: 10 minute recharge."
 }

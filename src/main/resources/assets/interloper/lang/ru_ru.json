@@ -152,5 +152,6 @@
   "advancements.interloper.skybox_active.title": "skybox_active",
   "advancements.interloper.skybox_active.description": "Ты выбрался из Source Void.",
   "message.interloper.skybox_locked": "skybox.exe: ещё не восстановлен",
-  "message.interloper.cube_error": "Cube:error"
+  "message.interloper.cube_error": "Cube:error",
+  "item.interloper.source_box.hint2": "Куб: перезарядка 10 минут."
 }

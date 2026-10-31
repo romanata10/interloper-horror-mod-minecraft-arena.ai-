@@ -69,6 +69,13 @@ public class SkyghostEntity extends SourceEntity {
             return;
         }
 
+        // inside the castle it simply waits: one ghost, forever, whether or not
+        // anybody is visiting
+        ServerPlayer bound = net.anomidae.interloper.util.Bindings.online(this, this.boundPlayerId());
+        if (bound == null || !bound.level().dimension().equals(Dimensions.SKYBOX)) {
+            return;
+        }
+
         this.lifeTicks++;
 
         ServerPlayer player = this.resolveTarget(64.0D);

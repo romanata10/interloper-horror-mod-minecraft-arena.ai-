@@ -58,7 +58,7 @@ public final class Graffiti {
         }
         boolean present = state.graffitiPresent();
 
-        // Once a minute, the wall decides whether somebody is allowed to exist.
+        // Once a minute, the wall decides whether a random somebody is allowed to exist.
         if (level.getGameTime() % 1200L == 0L && present && allowsInterloper(level)) {
             for (ServerPlayer player : level.players()) {
                 if (player.distanceToSqr(pos.getX(), pos.getY(), pos.getZ()) > RADIUS * RADIUS) {
@@ -87,27 +87,9 @@ public final class Graffiti {
             }
         }
 
-        for (net.anomidae.interloper.entity.InterloperEntity interloper
-                : level.getEntitiesOfClass(net.anomidae.interloper.entity.InterloperEntity.class,
-                new net.minecraft.world.phys.AABB(pos).inflate(RADIUS))) {
-            if (interloper.isRemoved() || interloper.isHunting() == false) {
-                continue;
-            }
-            if (!present) {
-                // the wall is clean, so he was never here
-                interloper.discard();
-                continue;
-            }
-            if (level.getRandom().nextInt(100) < 45) {
-                for (ServerPlayer player : level.players()) {
-                    player.sendSystemMessage(Component.literal("the man in the drawing looked at him")
-                            .withStyle(ChatFormatting.DARK_RED));
-                }
-                level.playSound(null, pos, net.minecraft.sounds.SoundEvents.BELL_RESONATE,
-                        net.minecraft.sounds.SoundSource.AMBIENT, 1.0F, 0.5F);
-                interloper.discard();
-            }
-        }
+        // The wall only decides whether a RANDOM Interloper may exist today.
+        // Everything that asks for him on purpose - the console, the chat command,
+        // falling out of the world - never looks at this block at all.
     }
 
     /**

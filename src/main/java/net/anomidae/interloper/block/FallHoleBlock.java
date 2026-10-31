@@ -1,5 +1,7 @@
 package net.anomidae.interloper.block;
 
+import net.anomidae.interloper.world.Dimensions;
+import net.anomidae.interloper.world.SkyboxDimension;
 import net.anomidae.interloper.world.WhiteDoor;
 import net.minecraft.core.BlockPos;
 import net.minecraft.server.level.ServerPlayer;
@@ -33,6 +35,11 @@ public class FallHoleBlock extends Block {
             return;
         }
         if (player.getY() > pos.getY() + 1.1D) {
+            return;
+        }
+        // in the pocket dimension the same hole is the way home
+        if (level.dimension().equals(Dimensions.SKYBOX)) {
+            SkyboxDimension.exit(player);
             return;
         }
         WhiteDoor.enter(player);

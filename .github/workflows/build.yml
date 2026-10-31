@@ -103,6 +103,8 @@ jobs:
             assets/interloper/blockstates/missing_texture.json \
             assets/interloper/blockstates/white_door.json \
             assets/interloper/blockstates/xbox_grass.json \
+            assets/interloper/blockstates/fall_hole.json \
+            assets/interloper/textures/block/fall_hole.png \
             assets/interloper/textures/block/missing_texture.png \
             assets/interloper/textures/block/xbox_grass.png \
             assets/interloper/textures/block/portal_panel.png \

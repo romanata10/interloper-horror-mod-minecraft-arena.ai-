@@ -95,6 +95,7 @@ public final class CommonEvents {
         XboxFabricator.tick(level);
         VoidDirector.tick(level);
         UnderBedrock.tick(level);
+        net.anomidae.interloper.world.SkyboxDimension.tick(level);
         Graffiti.tickDay(level);
         Graffiti.tickInterlopers(level);
         if (level.getGameTime() % 20L == 0L) {

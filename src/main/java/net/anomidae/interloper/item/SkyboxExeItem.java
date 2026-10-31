@@ -31,6 +31,12 @@ public class SkyboxExeItem extends Item {
         if (level.isClientSide || !(player instanceof ServerPlayer serverPlayer)) {
             return InteractionResultHolder.sidedSuccess(stack, level.isClientSide);
         }
+        // an exe is also the way out of the thing it opened
+        if (net.anomidae.interloper.world.Dimensions.isIn(serverPlayer,
+                net.anomidae.interloper.world.Dimensions.SKYBOX)) {
+            SkyboxDimension.exit(serverPlayer);
+            return InteractionResultHolder.sidedSuccess(stack, false);
+        }
         if (serverPlayer.isShiftKeyDown()) {
             player.sendSystemMessage(Component.literal("SKYBOX.exe: running"));
             SkyboxDimension.enter(serverPlayer);

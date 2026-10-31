@@ -50,8 +50,68 @@ public final class SkyboxDimension {
         ModNetwork.toPlayer(player, new ConsoleLinePacket("skybox.exe: mounted", 0xFFFFFFFF, true));
         ModNetwork.toPlayer(player, new ConsoleLinePacket("map: skybox_castle.bsp", 0xFFCFCFCF, false));
 
+        ensureExitPad(level);
         spawnResident(level, player);
         return true;
+    }
+
+    /**
+     * The hole in the castle floor that leads home. Re-stamped on every entry, so
+     * old worlds get it too.
+     */
+    private static void ensureExitPad(ServerLevel level) {
+        for (int x = -1; x <= 1; x++) {
+            for (int z = 5; z <= 7; z++) {
+                set(level, x, PEAK, z, ModBlocks.FALL_HOLE.get().defaultBlockState());
+            }
+        }
+        for (int x = -2; x <= 2; x++) {
+            set(level, x, PEAK, 4, ModBlocks.MISSING_TEXTURE.get().defaultBlockState());
+            set(level, x, PEAK, 8, ModBlocks.MISSING_TEXTURE.get().defaultBlockState());
+        }
+        for (int z = 4; z <= 8; z++) {
+            set(level, -2, PEAK, z, ModBlocks.MISSING_TEXTURE.get().defaultBlockState());
+            set(level, 2, PEAK, z, ModBlocks.MISSING_TEXTURE.get().defaultBlockState());
+        }
+    }
+
+    /**
+     * The way back. SKYBOX.exe, the exit pad in the castle floor and falling out
+     * of the map all end here.
+     */
+    public static boolean exit(ServerPlayer player) {
+        if (!Dimensions.isIn(player, Dimensions.SKYBOX)) {
+            return false;
+        }
+        if (!Dimensions.toOverworld(player, true)) {
+            player.sendSystemMessage(net.minecraft.network.chat.Component
+                    .literal("error: could not load minecraft:overworld"));
+            return false;
+        }
+        player.resetFallDistance();
+        player.sendSystemMessage(net.minecraft.network.chat.Component
+                .literal("you are outside again").withStyle(net.minecraft.ChatFormatting.WHITE));
+        ModNetwork.toPlayer(player, new ConsoleLinePacket("skybox.exe: disconnect", 0xFFCFCFCF, true));
+        ModNetwork.toPlayer(player, new ConsoleLinePacket("map: minecraft", 0xFFFFFFFF, false));
+        player.level().playSound(null, player.blockPosition(), SoundEvents.PORTAL_TRAVEL,
+                SoundSource.PLAYERS, 0.8F, 0.6F);
+        return true;
+    }
+
+    /**
+     * Falling out of the pocket dimension is also an exit, the same way it is for
+     * every other map in this mod.
+     */
+    public static void tick(ServerLevel level) {
+        if (!level.dimension().equals(Dimensions.SKYBOX)) {
+            return;
+        }
+        int bottom = level.getMinBuildHeight() - 4;
+        for (ServerPlayer player : level.players()) {
+            if (player.getY() < bottom) {
+                exit(player);
+            }
+        }
     }
 
     /**
@@ -122,6 +182,21 @@ public final class SkyboxDimension {
             set(level, x, PEAK + 4, 11, glass);
             set(level, x, PEAK + 4, -11, glass);
         }
+        // the way out: a hole in the castle floor that does not go anywhere here
+        for (int x = -1; x <= 1; x++) {
+            for (int z = 5; z <= 7; z++) {
+                set(level, x, PEAK, z, ModBlocks.FALL_HOLE.get().defaultBlockState());
+            }
+        }
+        for (int x = -2; x <= 2; x++) {
+            set(level, x, PEAK, 4, ModBlocks.MISSING_TEXTURE.get().defaultBlockState());
+            set(level, x, PEAK, 8, ModBlocks.MISSING_TEXTURE.get().defaultBlockState());
+        }
+        for (int z = 4; z <= 8; z++) {
+            set(level, -2, PEAK, z, ModBlocks.MISSING_TEXTURE.get().defaultBlockState());
+            set(level, 2, PEAK, z, ModBlocks.MISSING_TEXTURE.get().defaultBlockState());
+        }
+
         // tower on top
         for (int y = PEAK + 9; y <= PEAK + 16; y++) {
             int radius = 3;

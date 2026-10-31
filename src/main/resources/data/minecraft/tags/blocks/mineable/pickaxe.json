@@ -1,6 +1,12 @@
 {
   "replace": false,
   "values": [
-    "interloper:engine_terminal"
+    "interloper:engine_terminal",
+    "interloper:portal_floor",
+    "interloper:portal_panel",
+    "interloper:white_door",
+    "interloper:white_lock",
+    "interloper:white_wall",
+    "interloper:xbox_panel"
   ]
 }

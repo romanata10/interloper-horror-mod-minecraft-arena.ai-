@@ -112,5 +112,22 @@
   "death.attack.vrad_fatal": "%1$s was eaten by a VRAD error",
   "death.attack.broken_rig": "%1$s was folded by a broken rig",
   "overlay.interloper.void": "source void: minecraft",
-  "message.interloper.console_given": "A console was left in your inventory. It was not there before."
+  "message.interloper.console_given": "A console was left in your inventory. It was not there before.",
+  "block.interloper.xbox_grass": "Xbox Grass",
+  "block.interloper.xbox_dirt": "Xbox Dirt",
+  "block.interloper.xbox_panel": "Dashboard Panel",
+  "block.interloper.xbox_glow": "Dashboard Glow",
+  "block.interloper.portal_panel": "Portal Panel",
+  "block.interloper.portal_floor": "Aperture Floor",
+  "block.interloper.missing_texture": "Missing Texture Block",
+  "block.interloper.white_wall": "White Wall",
+  "block.interloper.white_door": "White Door",
+  "block.interloper.white_lock": "White Lock",
+  "item.interloper.white_door_key": "Small White Key",
+  "item.interloper.white_door_key.hint": "Opens the white door, and nothing else.",
+  "item.interloper.interloper_umbrella": "The Interloper's Umbrella",
+  "item.interloper.interloper_umbrella.hint": "Whatever it touches stops existing.",
+  "entity.interloper.broken_character": "Broken Character",
+  "item.interloper.broken_character_spawn_egg": "Broken Character Spawn Egg",
+  "death.attack.mob": "%1$s was removed from the level"
 }

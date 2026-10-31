@@ -6,6 +6,7 @@ import net.anomidae.interloper.registry.ModItems;
 import net.anomidae.interloper.registry.ModSounds;
 import net.anomidae.interloper.util.Hunters;
 import net.anomidae.interloper.util.ServerScheduler;
+import net.anomidae.interloper.world.Dimensions;
 import net.anomidae.interloper.world.SourceVoid;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.network.chat.Component;
@@ -150,7 +151,9 @@ public class InterloperEntity extends SourceEntity {
             return;
         }
 
-        boolean inVoid = this.level().dimension().equals(SourceVoid.LEVEL);
+        boolean inVoid = this.level().dimension().equals(Dimensions.SOURCE_VOID)
+                || this.level().dimension().equals(Dimensions.XBOX_DREAMS)
+                || this.level().dimension().equals(Dimensions.WHITE_DOOR);
         boolean wasInVoid = player.getPersistentData().getBoolean(VOID_FLAG);
 
         if (!inVoid && !wasInVoid) {

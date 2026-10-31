@@ -1,0 +1,10 @@
+{
+  "variants": {
+    "open=false": {
+      "model": "interloper:block/white_door"
+    },
+    "open=true": {
+      "model": "interloper:block/white_door"
+    }
+  }
+}

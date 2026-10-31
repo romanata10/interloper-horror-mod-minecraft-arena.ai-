@@ -1,0 +1,18 @@
+{
+  "type": "interloper:white_door_bsp",
+  "generator": {
+    "type": "minecraft:flat",
+    "settings": {
+      "biome": "interloper:white_door_bsp",
+      "lakes": false,
+      "features": false,
+      "layers": [
+        {
+          "block": "interloper:source_floor",
+          "height": 5
+        }
+      ],
+      "structure_overrides": []
+    }
+  }
+}

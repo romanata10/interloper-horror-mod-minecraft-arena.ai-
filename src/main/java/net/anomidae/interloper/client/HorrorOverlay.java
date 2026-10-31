@@ -3,6 +3,7 @@ package net.anomidae.interloper.client;
 import com.mojang.blaze3d.systems.RenderSystem;
 import net.anomidae.interloper.Interloper;
 import net.anomidae.interloper.util.SourceText;
+import net.anomidae.interloper.world.Dimensions;
 import net.anomidae.interloper.world.SourceVoid;
 import net.minecraft.ChatFormatting;
 import net.minecraft.client.Minecraft;
@@ -29,8 +30,12 @@ public final class HorrorOverlay {
         int height = gg.guiHeight();
         int time = mc.player.tickCount;
 
-        if (mc.level.dimension().equals(SourceVoid.LEVEL)) {
+        if (mc.level.dimension().equals(Dimensions.SOURCE_VOID)) {
             renderVoidLabel(gg, mc, width, height);
+        } else if (mc.level.dimension().equals(Dimensions.XBOX_DREAMS)) {
+            renderXbox(gg, mc, width, height, time);
+        } else if (mc.level.dimension().equals(Dimensions.WHITE_DOOR)) {
+            renderWhiteRoom(gg, mc, width, height);
         }
 
         if (ClientEffects.proximity > 0.01F) {
@@ -102,6 +107,38 @@ public final class HorrorOverlay {
         gg.drawString(mc.font, "maps/source_void.bsp", 6, 17, 0xFF5A5A5A);
         gg.drawString(mc.font, "elevation: " + (int) mc.player.getY(), 6, 28, 0xFF4A4A4A);
         gg.drawString(mc.font, "entities: 0", width - 6 - mc.font.width("entities: 0"), 6, 0xFF4A4A4A);
+    }
+
+    /**
+     * The dashboard. Green, curved, and missing the menu it used to have.
+     */
+    private static void renderXbox(GuiGraphics gg, Minecraft mc, int width, int height, int time) {
+        // green gradient, like the old blades
+        for (int y = 0; y < height; y += 2) {
+            float t = (float) y / height;
+            int alpha = (int) (18 + 30 * t);
+            int color = (alpha << 24) | (0x2A << 16) | (0x6B << 8) | 0x2A;
+            gg.fill(0, y, width, y + 2, color);
+        }
+        // vignette-ish corners, dashboard chrome
+        gg.fill(0, 0, width, 3, 0xCC8CFF00);
+        gg.fill(0, height - 3, width, height, 0xCC8CFF00);
+
+        if ((time / 90) % 12 < 8) {
+            gg.drawString(mc.font, "XBOX 360 DREAMS", 8, 8, 0xFFB6FF62);
+            gg.drawString(mc.font, "achievement unlocked: you are still here", 8, 20, 0xFF8CFF00);
+        }
+        gg.drawString(mc.font, "gamerscore: " + (mc.player == null ? 0 : mc.player.getXpLevel() * 100), 8, 32, 0xFF7ADB4A);
+        gg.drawString(mc.font, "players: 1", width - 8 - mc.font.width("players: 1"), 8, 0xFF7ADB4A);
+        gg.drawString(mc.font, "disk 1 / source engine", width - 8 - mc.font.width("disk 1 / source engine"),
+                height - 14, 0xFF5FA83C);
+    }
+
+    private static void renderWhiteRoom(GuiGraphics gg, Minecraft mc, int width, int height) {
+        gg.fill(0, 0, width, height, 0x14FFFFFF);
+        gg.drawString(mc.font, "white_door_bsp", 6, 6, 0xFFFFFFFF);
+        gg.drawString(mc.font, "the exit is white door and key", 6, 17, 0xFFDADADA);
+        gg.drawString(mc.font, "sv_cheats: 0", width - 6 - mc.font.width("sv_cheats: 0"), 6, 0xFFB0B0B0);
     }
 
     private static void drawCorruption(GuiGraphics gg, Minecraft mc, int width, int height, int time) {

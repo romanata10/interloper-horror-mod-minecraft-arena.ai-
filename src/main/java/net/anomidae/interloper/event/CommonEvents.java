@@ -50,6 +50,27 @@ public final class CommonEvents {
         }
     }
 
+    /**
+     * Says out loud whether every dimension of this mod actually exists in the
+     * running server. It is also what the CI smoke test checks.
+     */
+    @SubscribeEvent
+    public static void onServerStarted(net.minecraftforge.event.server.ServerStartedEvent event) {
+        var server = event.getServer();
+        for (var key : java.util.List.of(net.anomidae.interloper.world.Dimensions.SOURCE_VOID,
+                net.anomidae.interloper.world.Dimensions.XBOX_DREAMS,
+                net.anomidae.interloper.world.Dimensions.WHITE_DOOR)) {
+            ServerLevel level = server.getLevel(key);
+            boolean inRegistry = server.levelKeys().contains(key);
+            Interloper.LOGGER.info("[interloper] dimension {} -> {} (registry: {})",
+                    key.location(), level != null ? "ok" : "MISSING", inRegistry);
+        }
+        Interloper.LOGGER.info("[interloper] loaded entities: {} items: {} blocks: {}",
+                net.anomidae.interloper.registry.ModEntities.ENTITY_TYPES.getEntries().size(),
+                net.anomidae.interloper.registry.ModItems.ITEMS.getEntries().size(),
+                net.anomidae.interloper.registry.ModBlocks.BLOCKS.getEntries().size());
+    }
+
     @SubscribeEvent
     public static void onServerStopping(ServerStoppingEvent event) {
         ServerScheduler.reset();

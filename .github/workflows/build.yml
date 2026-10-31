@@ -202,17 +202,17 @@ jobs:
             echo "::error title=server::server reported a fatal problem"
             exit 1
           fi
-          echo "=== dimension lines in log ==="
-          grep -i "dimension\|Preparing\|interloper" server.log | head -30 || true
-          for dim in interloper:source_void interloper:xbox_360_dreams interloper:white_door_bsp; do
-            if ! grep -q "$dim" server.log; then
-              echo "::error title=dimension::$dim was never created"
-              grep -i "dimension\|Preparing" server.log | head -5 | while IFS= read -r l; do
+          echo "=== mod self-check ==="
+          grep "\[interloper\]" server.log | head -20 || true
+          for dim in source_void xbox_360_dreams white_door_bsp; do
+            if ! grep "\[interloper\] dimension interloper:$dim -> ok" server.log > /dev/null; then
+              grep "\[interloper\] dimension" server.log | head -5 | while IFS= read -r l; do
                 echo "::warning title=log::$(echo "$l" | head -c 900)"
               done
+              echo "::error title=dimension::interloper:$dim is missing at runtime"
               exit 1
             fi
-            echo "dimension loaded: $dim"
+            echo "dimension ok: interloper:$dim"
           done
           if grep -q -E "Couldn't parse|Failed to parse|Unable to load|Unknown dimension|datapack" server.log; then
             echo "::warning title=datapack::datapack warnings found in the server log"
